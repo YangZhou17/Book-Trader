@@ -137,6 +137,32 @@ def return_book():
     
     return jsonify({'success': True, 'message': 'Book returned successfully'}), 200
 
+@books_bp.route('/delete', methods=['DELETE'])
+def delete_book():
+    data = request.get_json()
+    username = data.get('username')
+    book_id = data.get('book_id')
+    
+    if not username or not book_id:
+        return jsonify({'success': False, 'message': 'Invalid parameters'}), 400
+    
+    user = User.query.filter_by(username=username).first()
+    if not user:
+        return jsonify({'success': False, 'message': 'User not found'}), 404
+
+    book = Book.query.get(book_id)
+    if not book:
+        return jsonify({'success': False, 'message': 'Book not found'}), 404
+    
+    # Ensure the book was uploaded by this user.
+    if book.user_id != user.id:
+        return jsonify({'success': False, 'message': 'Not authorized to delete this book'}), 403
+
+    db.session.delete(book)
+    db.session.commit()
+    
+    return jsonify({'success': True, 'message': 'Book deleted successfully'}), 200
+
 @books_bp.route('/books/selling', methods=['GET'])
 def fetch_selling_books():
     books = Book.query.filter_by(transaction_type='sell').all()
@@ -158,6 +184,51 @@ def fetch_renting_books():
         'price': book.price,
         'rent_duration': book.rent_duration,
         'owner': book.owner.username,
+        'uploaded_at': book.uploaded_at.isoformat()
+    } for book in books]
+    return jsonify({'books': books_data}), 200
+
+@books_bp.route('/books/all/<username>', methods=['GET'])
+def fetch_all_user_books(username):
+    user = User.query.filter_by(username=username).first()
+    if not user:
+        return jsonify({'success': False, 'message': 'User not found'}), 404
+    books = Book.query.filter_by(user_id=user.id).all()
+    books_data = [{
+        'id': book.id,
+        'name': book.name,
+        'price': book.price,
+        'transaction_type': book.transaction_type,
+        'rent_duration': book.rent_duration if book.transaction_type == 'rent' else None,
+        'uploaded_at': book.uploaded_at.isoformat()
+    } for book in books]
+    return jsonify({'books': books_data}), 200
+
+@books_bp.route('/books/selling/<username>', methods=['GET'])
+def fetch_user_selling_books(username):
+    user = User.query.filter_by(username=username).first()
+    if not user:
+        return jsonify({'success': False, 'message': 'User not found'}), 404
+    books = Book.query.filter_by(transaction_type='sell', user_id=user.id).all()
+    books_data = [{
+        'id': book.id,
+        'name': book.name,
+        'price': book.price,
+        'uploaded_at': book.uploaded_at.isoformat()
+    } for book in books]
+    return jsonify({'books': books_data}), 200
+
+@books_bp.route('/books/renting/<username>', methods=['GET'])
+def fetch_user_renting_books(username):
+    user = User.query.filter_by(username=username).first()
+    if not user:
+        return jsonify({'success': False, 'message': 'User not found'}), 404
+    books = Book.query.filter_by(transaction_type='rent', user_id=user.id).all()
+    books_data = [{
+        'id': book.id,
+        'name': book.name,
+        'price': book.price,
+        'rent_duration': book.rent_duration,
         'uploaded_at': book.uploaded_at.isoformat()
     } for book in books]
     return jsonify({'books': books_data}), 200
