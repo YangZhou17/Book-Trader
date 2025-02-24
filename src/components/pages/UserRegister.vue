@@ -42,7 +42,7 @@ export default {
         };
         console.log(data);
 
-      fetch("http://localhost:8080/api/register", {
+      fetch("http://localhost:5001/api/register", {
         method: 'POST',
         body: JSON.stringify(data),
         headers: { 'content-type': 'application/json' }
