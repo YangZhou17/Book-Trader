@@ -2,10 +2,22 @@ import {createRouter, createWebHashHistory} from "vue-router"
 const routes = [
     {
         path: '/',
-        redirect: '/index/manage/dataset',
+        redirect: '/login',
         children:[
             {
-                path: '/index/manage/dataset',
+                path: '/login',
+                component: () => import('./components/pages/UserLogin.vue'),
+                mata: {title: 'User Login'}, 
+                name: 'User Login',
+            },
+            {
+                path: '/register',
+                component: () => import('./components/pages/UserRegister.vue'),
+                mata: {title: 'User Register'}, 
+                name: 'User Register',
+            },
+            {
+                path: '/main',
                 component: () => import('./components/pages/Main.vue'),
                 mata: {title: 'Shelf Overview'},
                 name: 'Shelf Overview',
