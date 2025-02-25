@@ -25,9 +25,9 @@ def register():
         return response
     data = request.get_json()
     if User.query.filter_by(username=data['username']).first():
-        return jsonify({'success': False, 'message': 'Username already exists'}), 409
+        return jsonify({'success': False, 'userExists': True}), 409
     new_user = User(username=data['username'])
     new_user.set_password(data['password'])
     db.session.add(new_user)
     db.session.commit()
-    return jsonify({'success': True}), 201
+    return jsonify({'success': True, 'userExists': False}), 201
