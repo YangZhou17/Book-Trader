@@ -48,6 +48,7 @@ export default {
       .then(response => response.json())
       .then((data) => {
         if(data.success){
+          localStorage.setItem("username", this.username);
           console.log("You have logged in successfully!");
           this.$router.push('/main');
         }

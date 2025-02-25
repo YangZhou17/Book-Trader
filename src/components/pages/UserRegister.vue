@@ -49,9 +49,10 @@ export default {
       })
       .then(response => response.json())
       .then((data) => {
+        console.log(data);
         if(data.success){
           console.log("You have registered successfully");
-          this.$router.push('/main');
+          this.$router.push('/login');
         }
         else if (data.userExists){
           this.message = "User already exist! Please login.";
@@ -71,7 +72,6 @@ export default {
 <style> 
 body{
   background-color: beige;
-  text-align: center;
 }
 #registerButton{
   color: white;

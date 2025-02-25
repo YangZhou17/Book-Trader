@@ -11,7 +11,7 @@
         <el-main>
             <el-row>
                 <el-col :span="2">
-                    <el-button type="primary" @click="tocreate">Create Bookshelf</el-button>
+                    <el-button type="primary" @click="tocreate">Add a Book to Sell</el-button>
                 </el-col>
                 <el-col :span="2" :offset="12">
                     <el-select v-model="value" class="m-2" placeholder="Shelf">
@@ -225,7 +225,7 @@ import Breadcrumb from "../BreadCrumb.vue"
                 
             },
             tocreate(){
-                this.$router.push("/index/manage/dataset/create")
+                this.$router.push("/create")
             },
             get_datanum(){
                 let that = this;

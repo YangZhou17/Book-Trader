@@ -23,15 +23,15 @@ const routes = [
                 name: 'Shelf Overview',
             },
             {
-                path: '/index/manage/dataset/insert',
+                path: '/import',
                 component: () => import('./components/pages/Import.vue'),
                 mata: {title: 'Import'},
                 name: 'Import',
             },
             
             {
-                path: '/index/manage/dataset/create',
-                component: () => import('./components/pages/CreateSet.vue'),
+                path: '/create',
+                component: () => import('./components/pages/CreateBookItem.vue'),
                 mata: {title: 'Create Shelf'},
                 name: 'Create Shelf',
             },
