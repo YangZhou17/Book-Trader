@@ -12,17 +12,14 @@
         <li><a href="">About Us</a></li>
         <li><a href="">Our Service</a></li>
         <li>
-          <a href="">Introduction</a>
+          <a href="">{{username}}</a>
           <ul class="hide">
-            <li><a href="" @click="jump_to_introduction">placeholder</a></li>
-            <li><a href="">placeholder</a></li>
-            <li><a href="">placeholder</a></li>
-            <li><a href="">placeholder</a></li>
-            <li><a href="">placeholder</a></li>
-            <li><a href="">Contact Us</a></li>
+            <li><a href="">Profile</a></li>
+            <li><a href="">Personal Bookshelf</a></li>
+            <li><a href="">All Transactions</a></li>
+            <li><a @click="logout">Log out</a></li>
           </ul>
         </li>
-        <li id="shequ"><a href="">Community</a></li>
       </ul>
     </nav>
     </div>
@@ -103,7 +100,8 @@ export default {
   },
   data(){
     return{
-      isCollapse: false
+      isCollapse: false,
+      username: "Hello! " + localStorage.getItem("username") || ""
     }
   },
   methods: {
@@ -112,9 +110,10 @@ export default {
       document.getElementById("navlogo").style.display= this.isCollapse? "none" : "inline";
     },
 
-    //跳转至说明文档
-    jump_to_introduction()
-    {
+    logout(){
+      localStorage.removeItem("username");
+      console.log("You have successfully logged out. ")
+      this.$router.push("/login");
     }
   }
 }
