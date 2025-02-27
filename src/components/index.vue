@@ -12,7 +12,7 @@
         <li><a href="">About Us</a></li>
         <li><a href="">Our Service</a></li>
         <li>
-          <a href="">{{username}}</a>
+          <a href="">User</a>
           <ul class="hide">
             <li><a href="">Profile</a></li>
             <li><a href="">Personal Bookshelf</a></li>
@@ -101,7 +101,6 @@ export default {
   data(){
     return{
       isCollapse: false,
-      username: "Hello! " + localStorage.getItem("username") || ""
     }
   },
   methods: {
@@ -115,6 +114,10 @@ export default {
       console.log("You have successfully logged out. ")
       this.$router.push("/login");
     }
+  },
+
+  mounted() {
+
   }
 }
 </script>
