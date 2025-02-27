@@ -30,8 +30,8 @@ const routes = [
             },
             
             {
-                path: '/create',
-                component: () => import('./components/pages/CreateBookItem.vue'),
+                path: '/upload',
+                component: () => import('./components/pages/UploadBook.vue'),
                 mata: {title: 'Create Shelf'},
                 name: 'Create Shelf',
             },

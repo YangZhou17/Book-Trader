@@ -10,10 +10,13 @@
         <!-- Main Section -->
         <el-main>
             <el-row>
+                <!-- Upload book button --> 
                 <el-col :span="2">
-                    <el-button type="primary" @click="tocreate">Add a Book to Sell</el-button>
+                    <el-button type="primary" @click="toUpload">Upload Book</el-button>
                 </el-col>
-                <el-col :span="2" :offset="12">
+
+                <!-- My bookshelf/ public bookshelf -->
+                <!-- <el-col :span="2" :offset="12">
                     <el-select v-model="value" class="m-2" placeholder="Shelf">
                         <el-option
                             v-for="item in options"
@@ -22,8 +25,22 @@
                             :value="item.value"
                         />
                     </el-select>
+                </el-col> -->
+
+                <!-- Show selling/renting -->
+                <el-col :span="2" :offset="12">
+                    <el-select v-model="transactionType" class="m-2" placeholder="Selling" style="width: 100px" @change="fetchBooks">
+                        <el-option
+                            v-for="item in transactionTypes"
+                            :key="item.value"
+                            :label="item.label"
+                            :value="item.value"
+                        />
+                    </el-select>
                 </el-col>
-                <el-col :span="4">
+
+
+                <!-- <el-col :span="4">
                     <el-cascader v-model="Tvalue" :options="Toptions"  placeholder="All" @change="handleChosenChange"/>
                 </el-col>
                 <el-col :span="4">
@@ -35,9 +52,24 @@
                         @change="Searchbyname"
                     >
                     </el-input>
-                </el-col>
+                </el-col> -->
             </el-row>
-            <el-empty :image-size="250" description="Empty" v-if="value=='open' || data_num==0">
+
+            <!-- displaying books --> 
+            <el-empty v-if="fetchedBooks.length === 0" description="No books available" />
+            <el-table v-if="fetchedBooks.length != 0" :data="fetchedBooks" height="400" style="width: 100%" border>
+                <el-table-column prop="name" label="Name" width="180" />
+                <el-table-column prop="price" label="Price" width="180" />
+                <el-table-column prop="owner" label="Owner"  width="180" />
+                <el-table-column prop="uploaded_at" label="Uploaded At">
+                    <template v-slot="scope">
+                        {{ formatDate(scope.row.uploaded_at) }}
+                    </template>
+                </el-table-column>
+                <el-table-column v-if="transactionType === 'renting'" prop="rent_duration" label="Duration (days)" width="150" />
+            </el-table>
+
+            <!-- <el-empty :image-size="250" description="Empty" v-if="value=='open' || data_num==0">
             </el-empty>
             <div v-if="value!='open'">
             <div v-for = "(item,index) in MessageShow" :key="item.name">
@@ -65,10 +97,10 @@
                             <span>Delete</span>
                         </el-button>
                     </div>
-                </div>
+                </div> -->
 
                 <!-- Shelf Display Section -->
-                <el-descriptions
+                <!-- <el-descriptions
                     direction="vertical"
                     :column="8"
                     size="large"
@@ -90,13 +122,14 @@
                         <el-button type="primary" link key="export" @click="exportdata(item.name)">Export</el-button>
                     </el-descriptions-item>
                 </el-descriptions>
+
             <el-divider class="between" border-style="none"></el-divider>
             </div>
             </div>
-            <el-divider class="lower" border-style="none"></el-divider>
+            <el-divider class="lower" border-style="none"></el-divider> -->
 
             <!-- Pagination Section -->
-            <el-pagination
+            <!-- <el-pagination
                 v-model:currentPage="queryInfo.pagenum"
                 v-model:page-size="queryInfo.pagesize"
                 :page-sizes="[1, 2, 3,4, 5]"
@@ -107,13 +140,13 @@
                 @current-change="handleCurrentChange"
                 v-if="value!='open' && data_num!=0"
                 id="pagination"
-            />
+            /> -->
         </el-main>
     </el-container>
 </template>
 
 <script>
-import { reactive, ref } from "vue"
+// import { ref } from "vue"
 import Breadcrumb from "../BreadCrumb.vue"
     export default{
         name: "ManageDateSet",
@@ -122,272 +155,312 @@ import Breadcrumb from "../BreadCrumb.vue"
         },
         data(){
             return{
-                background :ref(true),
-                queryInfo: {
-                    query: '',
-                    pagenum: 1,
-                    pagesize: 2,
-                },
-                data_num: -1,
-                value: ref(''),
-                input: ref(''),
-                new_name: ref(''),
-                MessageInfo: reactive({}),
-                MessageShow: reactive({}),
-                MessageArray: reactive([]),
-                options : [
+                // background :ref(true),
+                // queryInfo: {
+                //     query: '',
+                //     pagenum: 1,
+                //     pagesize: 2,
+                // },
+                // data_num: -1,
+                // value: ref(''),
+                // input: ref(''),
+                // new_name: ref(''),
+                // MessageInfo: reactive({}),
+                // MessageShow: reactive({}),
+                // MessageArray: reactive([]),
+                // options : [
+                //     {
+                //         value: 'my',
+                //         label: 'My Bookshelf',
+                //     },
+                //     {
+                //         value: 'open',
+                //         label: 'Public Bookshelf',
+                //     },
+                // ],
+                // Tvalue: ref([]),
+                // Toptions : [
+                //     {
+                //         value: 'pic',
+                //         label: 'pic',
+                //         children: [
+                //             {
+                //                 value: 'pic_cla',
+                //                 label: 'tmp1',
+                //             },
+                //             {
+                //                 value: 'pic_det',
+                //                 label: 'tmp2',
+                //             },
+                //         ]
+                //     },
+                // ],
+                transactionType: 'selling', 
+                transactionTypes : [
                     {
-                        value: 'my',
-                        label: 'My Bookshelf',
-                    },
+                        value: 'selling', 
+                        label: "Selling", 
+                    }, 
                     {
-                        value: 'open',
-                        label: 'Public Bookshelf',
+                        value: 'renting', 
+                        label: 'Renting', 
                     },
                 ],
-                Tvalue: ref([]),
-                Toptions : [
-                    {
-                        value: 'pic',
-                        label: 'pic',
-                        children: [
-                            {
-                                value: 'pic_cla',
-                                label: 'tmp1',
-                            },
-                            {
-                                value: 'pic_det',
-                                label: 'tmp2',
-                            },
-                        ]
-                    },
-                ]
+                fetchedBooks: [], 
             }
         },
+
         methods:{
-            generate_id(index){
-                return "name_"+index
+            // Fetch selling/renting books by user selection
+            fetchBooks(){
+                console.log("Fetching data for:", this.transactionType);
+                let url = "http://localhost:5001/api/books/" + this.transactionType; 
+               
+                fetch(url, {
+                    method: 'GET',
+                    headers: { 'content-type': 'application/json' }
+                })
+                .then(response => response.json())
+                .then((data) => {
+                    this.fetchedBooks = data.books;
+                })
+                .catch(err => console.error(err));
             },
-            exportdata(name){
-                const data = {"name":name}
-                return fetch("/api/setsession",{
-                    method: 'POST',
-                    headers:{
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify(data)
-                })
-                .then(res=>res.json())
-                .then(()=>{
-                    this.$router.push("/index/manage/dataset/4-2");
-                })
+
+            formatDate(datetime) {
+                if (!datetime){
+                    return ""; 
+                }
+                return datetime.split("T")[0];
             },
-            handleChosenChange(){
-                let that = this;
-                const data = {"specy":this.Tvalue[0],"type":this.Tvalue[1]}
-                return fetch("/api/searchdata",{
-                    method: 'POST',
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify(data)
-                })
-                .then(res => res.json())
-                .then((j)=>{
-                    that.MessageInfo = j.MessageShow;
-                    that.data_num = j.data_num;
-                    that.MessageArray = reactive([]);
-                    for (let item in that.MessageInfo){
-                        that.MessageArray.push(item);
-                        if(that.MessageInfo[item]["in_state"]==="finished"){
-                            that.MessageInfo[item]["in_state"] = "Completed";
-                        }
-                        if(that.MessageInfo[item]["specy"]==="pic"){
-                            that.MessageInfo[item]["specy"] = "tmp";
-                        }
-                    }
-                    this.handleCurrentChange(1);
-                })
-            },
-            insert(name){
-                const data = {"name": name}
-                return fetch("/api/setsession",{
-                    method: 'POST',
-                    headers:{
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify(data)
-                })
-                .then(res => res.json())
-                .then(()=>{
-                    this.$router.push("/index/manage/dataset/insert");
-                })
+
+            // generate_id(index){
+            //     return "name_"+index
+            // },
+            // exportdata(name){
+            //     const data = {"name":name}
+            //     return fetch("/api/setsession",{
+            //         method: 'POST',
+            //         headers:{
+            //             "Content-Type": "application/json",
+            //         },
+            //         body: JSON.stringify(data)
+            //     })
+            //     .then(res=>res.json())
+            //     .then(()=>{
+            //         this.$router.push("/index/manage/dataset/4-2");
+            //     })
+            // },
+            // handleChosenChange(){
+            //     let that = this;
+            //     const data = {"specy":this.Tvalue[0],"type":this.Tvalue[1]}
+            //     return fetch("/api/searchdata",{
+            //         method: 'POST',
+            //         headers: {
+            //             "Content-Type": "application/json",
+            //         },
+            //         body: JSON.stringify(data)
+            //     })
+            //     .then(res => res.json())
+            //     .then((j)=>{
+            //         that.MessageInfo = j.MessageShow;
+            //         that.data_num = j.data_num;
+            //         that.MessageArray = reactive([]);
+            //         for (let item in that.MessageInfo){
+            //             that.MessageArray.push(item);
+            //             if(that.MessageInfo[item]["in_state"]==="finished"){
+            //                 that.MessageInfo[item]["in_state"] = "Completed";
+            //             }
+            //             if(that.MessageInfo[item]["specy"]==="pic"){
+            //                 that.MessageInfo[item]["specy"] = "tmp";
+            //             }
+            //         }
+            //         this.handleCurrentChange(1);
+            //     })
+            // },
+            // insert(name){
+            //     const data = {"name": name}
+            //     return fetch("/api/setsession",{
+            //         method: 'POST',
+            //         headers:{
+            //             "Content-Type": "application/json",
+            //         },
+            //         body: JSON.stringify(data)
+            //     })
+            //     .then(res => res.json())
+            //     .then(()=>{
+            //         this.$router.push("/index/manage/dataset/insert");
+            //     })
                 
+            // },
+            toUpload(){
+                this.$router.push("/upload")
             },
-            tocreate(){
-                this.$router.push("/create")
-            },
-            get_datanum(){
-                let that = this;
-                fetch("/api/getnum").then((res) => res.json().then((j) => {
-                    that.data_num = j.data_num;
-                    console.log(that.data_num);
-                }))
-            },
-            multilabel(name,specy){
-                const data = {"name": name}
-                return fetch("/api/setsession",{
-                    method: 'POST',
-                    headers:{
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify(data)
-                })
-                .then(res => res.json())
-                .then(()=>{
-                    console.log(specy);
-                    if(specy==="tmp"){
-                        const data = {"t_type": "all"};
-                        fetch("/api/sessiontype",{
-                            method: 'POST',
-                            headers: {
-                                "Content-Type": "application/json",
-                            },
-                            body: JSON.stringify(data)
-                        })
-                        .then((res)=>res.json())
-                        .then(()=>{
-                            this.$router.push("/index/menu3");
-                        })
+            // get_datanum(){
+            //     let that = this;
+            //     fetch("/api/getnum").then((res) => res.json().then((j) => {
+            //         that.data_num = j.data_num;
+            //         console.log(that.data_num);
+            //     }))
+            // },
+            // multilabel(name,specy){
+            //     const data = {"name": name}
+            //     return fetch("/api/setsession",{
+            //         method: 'POST',
+            //         headers:{
+            //             "Content-Type": "application/json",
+            //         },
+            //         body: JSON.stringify(data)
+            //     })
+            //     .then(res => res.json())
+            //     .then(()=>{
+            //         console.log(specy);
+            //         if(specy==="tmp"){
+            //             const data = {"t_type": "all"};
+            //             fetch("/api/sessiontype",{
+            //                 method: 'POST',
+            //                 headers: {
+            //                     "Content-Type": "application/json",
+            //                 },
+            //                 body: JSON.stringify(data)
+            //             })
+            //             .then((res)=>res.json())
+            //             .then(()=>{
+            //                 this.$router.push("/index/menu3");
+            //             })
                         
-                    }
-                })
+            //         }
+            //     })
             },
+            
+            mounted() {
+                this.fetchBooks();
+            }
 
             // Search Dataset
-            Searchbyname(){
-                const data = {"name":this.input};
-                let that = this;
-                return fetch("/api/searchname",{
-                    method: 'POST',
-                    headers:{
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify(data)
-                })
-                .then(res => res.json())
-                .then((j)=>{
-                    that.MessageInfo = j.MessageShow;
-                    that.data_num = j.data_num;
-                    that.MessageArray = reactive([]);
-                    for (let item in that.MessageInfo){
-                        that.MessageArray.push(item);
-                        if(that.MessageInfo[item]["in_state"]==="finished"){
-                            that.MessageInfo[item]["in_state"] = "Completed";
-                        }
-                        if(that.MessageInfo[item]["specy"]==="pic"){
-                            that.MessageInfo[item]["specy"] = "pic";
-                        }
-                    }
-                    this.handleCurrentChange(1);
-                })
+        //     Searchbyname(){
+        //         const data = {"name":this.input};
+        //         let that = this;
+        //         return fetch("/api/searchname",{
+        //             method: 'POST',
+        //             headers:{
+        //                 "Content-Type": "application/json",
+        //             },
+        //             body: JSON.stringify(data)
+        //         })
+        //         .then(res => res.json())
+        //         .then((j)=>{
+        //             that.MessageInfo = j.MessageShow;
+        //             that.data_num = j.data_num;
+        //             that.MessageArray = reactive([]);
+        //             for (let item in that.MessageInfo){
+        //                 that.MessageArray.push(item);
+        //                 if(that.MessageInfo[item]["in_state"]==="finished"){
+        //                     that.MessageInfo[item]["in_state"] = "Completed";
+        //                 }
+        //                 if(that.MessageInfo[item]["specy"]==="pic"){
+        //                     that.MessageInfo[item]["specy"] = "pic";
+        //                 }
+        //             }
+        //             this.handleCurrentChange(1);
+        //         })
 
-            },
+        //     },
 
-            // Change Name
-            change_name(name){
-                const data = {"new_name":this.new_name,"old_name":name};
-                return fetch("/api/changename",{
-                    method: 'POST',
-                    headers:{
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify(data)
-                })
-                .then(res => res.json())
-                .then(()=>{
-                    this.$router.push("/index/manage/blank")
-                })
+        //     // Change Name
+        //     change_name(name){
+        //         const data = {"new_name":this.new_name,"old_name":name};
+        //         return fetch("/api/changename",{
+        //             method: 'POST',
+        //             headers:{
+        //                 "Content-Type": "application/json",
+        //             },
+        //             body: JSON.stringify(data)
+        //         })
+        //         .then(res => res.json())
+        //         .then(()=>{
+        //             this.$router.push("/index/manage/blank")
+        //         })
 
-            },
-            show_nametxt(index){
-                console.log(index)
-                let txt = document.getElementById("name_"+index);
-                if(txt.style.visibility==='visible'){
-                    txt.style.visibility='hidden';
-                }
-                else{
-                    txt.style.visibility='visible';
-                    txt.style.backgroundColor="white";
-                }
-            },
+        //     },
+        //     show_nametxt(index){
+        //         console.log(index)
+        //         let txt = document.getElementById("name_"+index);
+        //         if(txt.style.visibility==='visible'){
+        //             txt.style.visibility='hidden';
+        //         }
+        //         else{
+        //             txt.style.visibility='visible';
+        //             txt.style.backgroundColor="white";
+        //         }
+        //     },
 
-            // Get Data
-            get_data(){
-                this.get_datanum();
-                let that = this;
-                fetch("/api/getdata").then((res) => res.json().then((j)=>{
-                    that.MessageInfo = j.MessageInfo;
-                    that.MessageArray = reactive([]);
-                    for (let item in that.MessageInfo){
-                        that.MessageArray.push(item);
-                        if(that.MessageInfo[item]["in_state"]==="finished"){
-                            that.MessageInfo[item]["in_state"] = "Completed";
-                        }
-                        if(that.MessageInfo[item]["specy"]==="pic"){
-                            that.MessageInfo[item]["specy"] = "tmp";
-                        }
-                    }
-                    this.handleCurrentChange(1);
-                }))
-            },
-            handleSizeChange(newSize){
-                this.queryInfo.pagesize = newSize;
-                this.handleCurrentChange(1);
-            },
-            handleCurrentChange(newPage){
-                this.queryInfo.pagenum = newPage;
-                let start = (this.queryInfo.pagenum - 1) * this.queryInfo.pagesize;
-                let end = start + this.queryInfo.pagesize;
-                if (this.MessageArray.length < end){
-                    end = this.MessageArray.length;
-                }
-                this.MessageShow = reactive({});
-                for (let i = start; i < end; i++){
-                    this.MessageShow[this.MessageArray[i]]=this.MessageInfo[this.MessageArray[i]];
-                }
-            },
+        //     // Get Data
+        //     get_data(){
+        //         this.get_datanum();
+        //         let that = this;
+        //         fetch("/api/getdata").then((res) => res.json().then((j)=>{
+        //             that.MessageInfo = j.MessageInfo;
+        //             that.MessageArray = reactive([]);
+        //             for (let item in that.MessageInfo){
+        //                 that.MessageArray.push(item);
+        //                 if(that.MessageInfo[item]["in_state"]==="finished"){
+        //                     that.MessageInfo[item]["in_state"] = "Completed";
+        //                 }
+        //                 if(that.MessageInfo[item]["specy"]==="pic"){
+        //                     that.MessageInfo[item]["specy"] = "tmp";
+        //                 }
+        //             }
+        //             this.handleCurrentChange(1);
+        //         }))
+        //     },
+        //     handleSizeChange(newSize){
+        //         this.queryInfo.pagesize = newSize;
+        //         this.handleCurrentChange(1);
+        //     },
+        //     handleCurrentChange(newPage){
+        //         this.queryInfo.pagenum = newPage;
+        //         let start = (this.queryInfo.pagenum - 1) * this.queryInfo.pagesize;
+        //         let end = start + this.queryInfo.pagesize;
+        //         if (this.MessageArray.length < end){
+        //             end = this.MessageArray.length;
+        //         }
+        //         this.MessageShow = reactive({});
+        //         for (let i = start; i < end; i++){
+        //             this.MessageShow[this.MessageArray[i]]=this.MessageInfo[this.MessageArray[i]];
+        //         }
+        //     },
 
-            // Used to set the default option for the page form
-            setvalue(){
-                this.value = this.options[0].value;
-            },
+        //     // Used to set the default option for the page form
+        //     setvalue(){
+        //         this.value = this.options[0].value;
+        //     },
 
-            // Delete Data
-            deletedata(name){
-                let that = this;
-                const d_name = {"name": name,}
-                console.log(d_name)
-                return fetch("/api/deletedata",{
-                    method: 'POST',
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify(d_name)
-                })
-                .then(res => res.json())
-                .then(() => {
-                    if(that.data_num>0){
-                        that.data_num = that.data_num - 1;
-                    }
-                    this.$router.push("/index/manage/blank")
-                })
-            }
-        },
-        created() {
-            this.setvalue();
-            this.get_data();
-        }
+        //     // Delete Data
+        //     deletedata(name){
+        //         let that = this;
+        //         const d_name = {"name": name,}
+        //         console.log(d_name)
+        //         return fetch("/api/deletedata",{
+        //             method: 'POST',
+        //             headers: {
+        //                 "Content-Type": "application/json",
+        //             },
+        //             body: JSON.stringify(d_name)
+        //         })
+        //         .then(res => res.json())
+        //         .then(() => {
+        //             if(that.data_num>0){
+        //                 that.data_num = that.data_num - 1;
+        //             }
+        //             this.$router.push("/index/manage/blank")
+        //         })
+        //     }
+        // },
+        // created() {
+        //     this.setvalue();
+        //     this.get_data();
+        // },
 
     }
 </script>
