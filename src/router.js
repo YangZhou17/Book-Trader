@@ -23,11 +23,29 @@ const routes = [
                 name: 'Shelf Overview',
             },
             {
-                path: '/import',
-                component: () => import('./components/pages/Import.vue'),
-                mata: {title: 'Import'},
-                name: 'Import',
+                path: '/profile',
+                component: () => import('./components/pages/UserProfile.vue'),
+                mata: {title: 'User Profile'},
+                name: 'User Profile',
             },
+            {
+                path: '/followers',
+                component: () => import('./components/pages/UserFollowers.vue'),
+                mata: {title: 'User Follower'},
+                name: 'User Follower',
+            },
+            {
+                path: '/following',
+                component: () => import('./components/pages/UserFollowing.vue'),
+                mata: {title: 'User Followings'},
+                name: 'User Followings',
+            },
+            // {
+            //     path: '/import',
+            //     component: () => import('./components/pages/Import.vue'),
+            //     mata: {title: 'Import'},
+            //     name: 'Import',
+            // },
             
             {
                 path: '/upload',
@@ -35,15 +53,12 @@ const routes = [
                 mata: {title: 'Create Shelf'},
                 name: 'Create Shelf',
             },
-            {
-                path: '/index/manage/blank',
-                component: () => import('./components/pages/BlankPage.vue'),
-                name: 'blank',
-                meta: {title:'blank'}
-            },
-            
-            
-            
+            // {
+            //     path: '/index/manage/blank',
+            //     component: () => import('./components/pages/BlankPage.vue'),
+            //     name: 'blank',
+            //     meta: {title:'blank'}
+            // },
         ]
     }
 ]

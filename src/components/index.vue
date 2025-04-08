@@ -14,9 +14,7 @@
         <li>
           <a href="">User</a>
           <ul class="hide">
-            <li><a href="">Profile</a></li>
-            <li><a href="">Personal Bookshelf</a></li>
-            <li><a href="">All Transactions</a></li>
+            <li><a @click="navToProfile">Profile</a></li>
             <li><a @click="logout">Log out</a></li>
           </ul>
         </li>
@@ -113,6 +111,10 @@ export default {
       localStorage.removeItem("username");
       console.log("You have successfully logged out. ")
       this.$router.push("/login");
+    },
+
+    navToProfile(){
+      this.$router.push("/profile");
     }
   },
 

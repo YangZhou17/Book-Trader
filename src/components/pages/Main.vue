@@ -28,7 +28,7 @@
                 </el-col> -->
 
                 <!-- Show selling/renting -->
-                <el-col :span="2" :offset="12">
+                <el-col :span="2" :offset="18">
                     <el-select v-model="transactionType" class="m-2" placeholder="Selling" style="width: 100px" @change="fetchBooks">
                         <el-option
                             v-for="item in transactionTypes"
