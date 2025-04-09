@@ -28,7 +28,7 @@
                 <!-- Second column: Follow button -->
                 <el-table-column>
                 <template #default="scope">
-                    <el-button type="primary" size="mini" @click="follow(scope.row)">Follow</el-button>
+                    <el-button type="primary" size="mini" @click="follow(scope.row)" :disabled="scope.row.followed">Follow</el-button>
                 </template>
                 </el-table-column>
             </el-table>
@@ -37,7 +37,6 @@
 </template>
 
 <script>
-// import { ref } from "vue"
 import Breadcrumb from "../BreadCrumb.vue"
     export default{
         name: 'UserFollowers',
@@ -48,37 +47,100 @@ import Breadcrumb from "../BreadCrumb.vue"
             return{
                 username: localStorage.getItem("username") || "",
                 followers: [], 
+                followings: []
             }
         },
 
         methods:{
-             fetchFollowers(){
+            // fetch all followers
+            fetchFollowers(){
                 console.log("fetching followers"); 
-                this.followers = [
-                                        { name: 'Alice' },
-                                        { name: 'Bob' },
-                                        { name: 'Charlie' }
-                                    ]; 
-                // let url = "http://localhost:5001/api/" + this.username + "/followers" ; 
 
-                // fetch(url, {
-                //     method: 'GET',
-                //     headers: { 'content-type': 'application/json' }
-                // })
-                // .then(response => response.json())
-                // .then((data) => {
-                //     this.numFollowers = data.length;
-                // })
-                // .catch(err => console.error(err));
+                let url = "http://localhost:5001/api/" + this.username + "/followers" ; 
+
+                fetch(url, {
+                    method: 'GET',
+                    headers: { 'content-type': 'application/json' }
+                })
+                .then(response => response.json())
+                .then((data) => {
+                    if(!data.success){
+                        console.log(data.message);
+                    }
+                    else{
+                        this.followers = data.map(user => ({
+                            ...user,
+                            followed: false
+                        }));
+                        this.markAlreadyFollowed();
+                    }
+                })
+                .catch(err => console.error(err));
             }, 
 
+            // fetch all followings
+            fetchFollowing(){
+                console.log("fetching followings"); 
+
+                let url = "http://localhost:5001/api/" + this.username + "/following" ; 
+
+                fetch(url, {
+                    method: 'GET',
+                    headers: { 'content-type': 'application/json' }
+                })
+                .then(response => response.json())
+                .then((data) => {
+                    if(!data.success){
+                        console.log(data.message);
+                    }
+                    else{
+                        this.followings = data;
+                    }
+                })
+                .catch(err => console.error(err));
+            }, 
+
+            // check if the current followers is already followed by current user (in following list)
+            markAlreadyFollowed() {
+                this.followers.forEach(follower => {
+                    if (this.followingList.includes(follower.name)) {
+                        follower.followed = true;
+                    }
+                });
+            }, 
+
+            // follow the selected user on follow button clicked
             follow(user){
-                console.log("Trying to follow: " + user);
+                console.log("Trying to follow: " + user.name);
+
+                let url = "http://localhost:5001/api/follow" ; 
+                const data = {
+                    'follower_name': this.username, //current user
+                    'followed_name': user.name, //new user current user trying to follow
+                };
+
+                fetch(url, {
+                    method: 'POST',
+                    body: JSON.stringify(data),
+                    headers: { 'content-type': 'application/json' }
+                })
+                .then(response => response.json())
+                .then((data) => {
+                    if(data.success){
+                        console.log(data.message);
+                        user.followed = true;
+                    }
+                    else{
+                        console.log(data.message);
+                    }
+                })
+                .catch(err => console.error(err));
             }
         },
             
         mounted() {
             this.fetchFollowers(); 
+            this.fetchFollowing()
         }
 
     }

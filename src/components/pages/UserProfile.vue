@@ -21,7 +21,7 @@
                     <p @click="showFollowing">{{numFollowing}} following</p>
                 </el-col>
                 <el-col :span="4">
-                    <p>bought and rent {{numTransactions}} books</p>
+                    <p>Total {{numTransactions}} transactions</p>
                 </el-col>
             </el-row>
 
@@ -56,7 +56,6 @@
 </template>
 
 <script>
-// import { ref } from "vue"
 import Breadcrumb from "../BreadCrumb.vue"
     export default{
         components:{
@@ -99,67 +98,84 @@ import Breadcrumb from "../BreadCrumb.vue"
             // Fetch number of followers, followings, total transactions
             fetchFollowers(){
                 console.log("fetching number of followers"); 
-                this.numFollowers = 6; 
-                // let url = "http://localhost:5001/api/" + this.username + "/followers" ; 
+                let url = "http://localhost:5001/api/" + this.username + "/followers" ; 
 
-                // fetch(url, {
-                //     method: 'GET',
-                //     headers: { 'content-type': 'application/json' }
-                // })
-                // .then(response => response.json())
-                // .then((data) => {
-                //     this.numFollowers = data.length;
-                // })
-                // .catch(err => console.error(err));
+                fetch(url, {
+                    method: 'GET',
+                    headers: { 'content-type': 'application/json' }
+                })
+                .then(response => response.json())
+                .then((data) => {
+                    if(!data.success){
+                        console.log(data.message);
+                    }
+                    else{
+                        this.numFollowers = data.length;
+                    }
+                })
+                .catch(err => console.error(err));
             }, 
 
             fetchFollowing(){
                 console.log("fetching number of followings"); 
-                this.numFollowing = 3; 
-                // let url = "http://localhost:5001/api/" + this.username + "/following" ; 
+                let url = "http://localhost:5001/api/" + this.username + "/following" ; 
 
-                // fetch(url, {
-                //     method: 'GET',
-                //     headers: { 'content-type': 'application/json' }
-                // })
-                // .then(response => response.json())
-                // .then((data) => {
-                //     this.numFollowing = data.length;
-                // })
-                // .catch(err => console.error(err));
+                fetch(url, {
+                    method: 'GET',
+                    headers: { 'content-type': 'application/json' }
+                })
+                .then(response => response.json())
+                .then((data) => {
+                    if(!data.success){
+                        console.log(data.message);
+                    }
+                    else{
+                        this.numFollowing = data.length;
+                    }
+                })
+                .catch(err => console.error(err));
             }, 
 
-             fetchTransactions(){
-                console.log("fetching number of followings"); 
-                this.numTransactions = 19; 
-                // let url = "http://localhost:5001/api/transactions/" + this.username; 
+            fetchTransactions(){
+                console.log("fetching number of transactions"); 
+                let url = "http://localhost:5001/api/transactions/" + this.username; 
 
-                // fetch(url, {
-                //     method: 'GET',
-                //     headers: { 'content-type': 'application/json' }
-                // })
-                // .then(response => response.json())
-                // .then((data) => {
-                //     this.numTransactions = data.length;
-                // })
-                // .catch(err => console.error(err));
+                fetch(url, {
+                    method: 'GET',
+                    headers: { 'content-type': 'application/json' }
+                })
+                .then(response => response.json())
+                .then((data) => {
+                    if(!data.success){
+                        console.log(data.message);
+                    }
+                    else{
+                        this.numTransactions = data.transactions.length;
+                    }
+                })
+                .catch(err => console.error(err));
             }, 
 
 
             // Fetch selling/renting books by user selection
             fetchBooks(){
                 console.log("Fetching data for", this.transactionType, "of user", this.username);
-                // let url = "http://localhost:5001/api/books/" + this.username + "/" + this.transactionType; 
+                let url = "http://localhost:5001/api/books/" + this.transactionType + "/" + this.username; 
 
-                // fetch(url, {
-                //     method: 'GET',
-                //     headers: { 'content-type': 'application/json' }
-                // })
-                // .then(response => response.json())
-                // .then((data) => {
-                //     this.fetchedBooks = data.books;
-                // })
-                // .catch(err => console.error(err));
+                fetch(url, {
+                    method: 'GET',
+                    headers: { 'content-type': 'application/json' }
+                })
+                .then(response => response.json())
+                .then((data) => {
+                    if(!data.success){
+                        console.log(data.message);
+                    }
+                    else{
+                        this.fetchedBooks = data.books;
+                    }
+                })
+                .catch(err => console.error(err));
             },
 
             formatDate(datetime) {
