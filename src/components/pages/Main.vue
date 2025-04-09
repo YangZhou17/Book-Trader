@@ -60,7 +60,11 @@
             <el-table v-if="fetchedBooks.length != 0" :data="fetchedBooks" height="400" style="width: 100%" border>
                 <el-table-column prop="name" label="Name" width="180" />
                 <el-table-column prop="price" label="Price" width="180" />
-                <el-table-column prop="owner" label="Owner"  width="180" />
+                <el-table-column prop="owner" label="Owner" width="180">
+                    <template v-slot="scope">
+                        <el-link :underline="false" @click="goToUploaderProfile(scope.row.owner)">{{ scope.row.owner }}</el-link>
+                    </template>
+                </el-table-column>
                 <el-table-column prop="uploaded_at" label="Uploaded At">
                     <template v-slot="scope">
                         {{ formatDate(scope.row.uploaded_at) }}
@@ -182,12 +186,7 @@ import Breadcrumb from "../BreadCrumb.vue"
                 })
                 .then(response => response.json())
                 .then((data) => {
-                    if(!data.success){
-                        console.log(data.message);
-                    }
-                    else{
-                        this.fetchedBooks = data.books;
-                    }
+                    this.fetchedBooks = data.books;
                 })
                 .catch(err => console.error(err));
             },
@@ -201,6 +200,10 @@ import Breadcrumb from "../BreadCrumb.vue"
 
             toUpload(){
                 this.$router.push("/upload")
+            },
+            goToUploaderProfile(username) {
+            // Implement navigation to uploader's profile based on username
+                this.$router.push(`/profile/${username}`);
             },
         },
             

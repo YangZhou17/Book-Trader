@@ -114,7 +114,14 @@ export default {
     },
 
     navToProfile(){
-      this.$router.push("/profile");
+      const username = localStorage.getItem("username");
+      if (username) {
+        this.$router.push(`/profile/${username}`);
+      } else {
+        console.error("No username found in local storage");
+        // Optionally redirect to login or show an error message
+        this.$router.push("/login");
+      }
     }
   },
 

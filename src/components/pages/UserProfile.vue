@@ -11,8 +11,11 @@
         <el-main>
             <!-- username and basic stats --> 
             <el-row>
-                <el-col :span="10">
-                    <h1>Hi! {{username}}</h1>
+                <el-col :span="5">
+                    <h1>{{username}}</h1>
+                </el-col>
+                <el-col :span="5">
+                    <el-button v-if="!isCurrentUser" type="primary" @click="follow">Follow</el-button>
                 </el-col>
                 <el-col :span="4">
                     <p @click="showFollowers">{{numFollowers}} followers</p>
@@ -61,9 +64,15 @@ import Breadcrumb from "../BreadCrumb.vue"
         components:{
             Breadcrumb,
         },
+        computed: {
+            isCurrentUser() {
+                return this.username === localStorage.getItem("username");
+            }
+        },
+        props: ['username'],
         data(){
             return{
-                username: localStorage.getItem("username") || "",
+                //username: localStorage.getItem("username") || "",
                 numFollowers: 0, 
                 numFollowing: 0, 
                 numTransactions: 0, 
@@ -168,12 +177,9 @@ import Breadcrumb from "../BreadCrumb.vue"
                 })
                 .then(response => response.json())
                 .then((data) => {
-                    if(!data.success){
-                        console.log(data.message);
-                    }
-                    else{
-                        this.fetchedBooks = data.books;
-                    }
+
+                    this.fetchedBooks = data.books;
+                    
                 })
                 .catch(err => console.error(err));
             },
@@ -184,6 +190,42 @@ import Breadcrumb from "../BreadCrumb.vue"
                 }
                 return datetime.split("T")[0];
             },
+
+            follow() {
+                const currentUser = localStorage.getItem("username");
+                const userToFollow = this.username; // Username of the profile being viewed
+
+                if (currentUser === userToFollow) {
+                console.error("Cannot follow yourself.");
+                return;
+                }
+
+                console.log("Trying to follow:", userToFollow);
+
+                const url = "http://localhost:5001/api/follow";
+                const data = {
+                follower_name: currentUser,  // Current logged-in user
+                followed_name: userToFollow, // User that current user is trying to follow
+                };
+
+                fetch(url, {
+                method: 'POST',
+                body: JSON.stringify(data),
+                headers: { 'content-type': 'application/json' }
+                })
+                .then(response => response.json())
+                .then((data) => {
+                if (data.success) {
+                    console.log(data.message);
+                    // Optional: Update local UI state to reflect follow status
+                } else {
+                    console.error(data.message);
+                }
+                })
+                .catch(err => console.error(err));
+            
+            },
+
         },
             
         mounted() {
