@@ -12,7 +12,7 @@ def create_app():
 
     with app.app_context():
         from models import User, Book, Transaction
-        # db.drop_all()   For development
+        # db.drop_all()   # For development
         db.create_all()
 
     # Register blueprints after creating the app context

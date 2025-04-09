@@ -188,6 +188,91 @@ def fetch_renting_books():
     } for book in books]
     return jsonify({'books': books_data}), 200
 
+@books_bp.route('/books/search', methods=['GET'])
+def fetch_books_by_parameter():
+    # Retrieve query parameters from the URL (all are optional)
+    book_name = request.args.get('book_name')
+    transaction_type = request.args.get('transaction_type')
+    username = request.args.get('username')
+    min_price = request.args.get('min_price')
+    max_price = request.args.get('max_price')
+    rent_duration = request.args.get('rent_duration')
+
+    # Ensure that at least one search parameter has been provided.
+    if not (book_name or transaction_type or username or min_price or max_price or rent_duration):
+        return jsonify({'success': False, 'message': 'At least one search parameter must be provided.'}), 400
+
+    query = Book.query
+
+    # Filter by book name (using case-insensitive partial matching)
+    if book_name:
+        query = query.filter(Book.name.ilike(f"%{book_name}%"))
+    
+    # Filter by transaction type ('rent' or 'sell')
+    if transaction_type:
+        query = query.filter(Book.transaction_type == transaction_type)
+    
+    # Filter by owner's username using the relationship from models (Book.owner)
+    if username:
+        query = query.filter(Book.owner.has(username=username))
+    
+    # Filter by a minimum price if provided
+    if min_price:
+        try:
+            min_price_value = float(min_price)
+            query = query.filter(Book.price >= min_price_value)
+        except ValueError:
+            return jsonify({'success': False, 'message': 'Invalid min_price value'}), 400
+    
+    # Filter by a maximum price if provided
+    if max_price:
+        try:
+            max_price_value = float(max_price)
+            query = query.filter(Book.price <= max_price_value)
+        except ValueError:
+            return jsonify({'success': False, 'message': 'Invalid max_price value'}), 400
+
+    # Filter by rent_duration if provided.
+    # Note: The rent_duration filter is only applicable when looking for renting books.
+    if rent_duration:
+        try:
+            rent_duration_value = int(rent_duration)
+        except ValueError:
+            return jsonify({'success': False, 'message': 'Invalid rent_duration value'}), 400
+        
+        if transaction_type:
+            if transaction_type.lower() == 'rent':
+                query = query.filter(Book.rent_duration == rent_duration_value)
+            # If transaction_type is 'sell', we ignore the rent_duration filter.
+        else:
+            # When transaction_type is not provided, return all selling books
+            # and renting books with rent_duration >= the provided value.
+            from sqlalchemy import or_, and_
+            query = query.filter(
+                or_(
+                    Book.transaction_type == 'sell',
+                    and_(Book.transaction_type == 'rent', Book.rent_duration >= rent_duration_value)
+                )
+            )
+
+    # Execute the query and prepare the result data
+    books = query.all()
+    books_data = []
+    for book in books:
+        book_data = {
+            'id': book.id,
+            'name': book.name,
+            'transaction_type': book.transaction_type,
+            'price': book.price,
+            'uploaded_at': book.uploaded_at.isoformat(),
+            'owner': book.owner.username
+        }
+        if book.transaction_type == 'rent':
+            book_data['rent_duration'] = book.rent_duration
+        books_data.append(book_data)
+
+    return jsonify({'success': True, 'books': books_data}), 200
+
 @books_bp.route('/books/all/<username>', methods=['GET'])
 def fetch_all_user_books(username):
     user = User.query.filter_by(username=username).first()
