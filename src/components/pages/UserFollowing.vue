@@ -51,12 +51,7 @@ import Breadcrumb from "../BreadCrumb.vue"
                 })
                 .then(response => response.json())
                 .then((data) => {
-                    if(!data.success){
-                        console.log(data.message);
-                    }
-                    else{
-                        this.followings = data;
-                    }
+                    this.followings = data;
                 })
                 .catch(err => console.error(err));
             }, 

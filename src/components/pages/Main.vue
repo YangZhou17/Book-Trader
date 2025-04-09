@@ -150,7 +150,6 @@
 </template>
 
 <script>
-// import { ref } from "vue"
 import Breadcrumb from "../BreadCrumb.vue"
     export default{
         name: "ManageDateSet",
@@ -186,7 +185,11 @@ import Breadcrumb from "../BreadCrumb.vue"
                 })
                 .then(response => response.json())
                 .then((data) => {
-                    this.fetchedBooks = data.books;
+                    if (data.success) {
+                        this.fetchedBooks = data.books;
+                    } else {
+                        console.error(data.message);
+                    }
                 })
                 .catch(err => console.error(err));
             },
@@ -201,8 +204,9 @@ import Breadcrumb from "../BreadCrumb.vue"
             toUpload(){
                 this.$router.push("/upload")
             },
+            
             goToUploaderProfile(username) {
-            // Implement navigation to uploader's profile based on username
+                // Implement navigation to uploader's profile based on username
                 this.$router.push(`/profile/${username}`);
             },
         },

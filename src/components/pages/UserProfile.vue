@@ -115,12 +115,7 @@ import Breadcrumb from "../BreadCrumb.vue"
                 })
                 .then(response => response.json())
                 .then((data) => {
-                    if(!data.success){
-                        console.log(data.message);
-                    }
-                    else{
-                        this.numFollowers = data.length;
-                    }
+                    this.numFollowers = data.length;
                 })
                 .catch(err => console.error(err));
             }, 
@@ -135,12 +130,7 @@ import Breadcrumb from "../BreadCrumb.vue"
                 })
                 .then(response => response.json())
                 .then((data) => {
-                    if(!data.success){
-                        console.log(data.message);
-                    }
-                    else{
-                        this.numFollowing = data.length;
-                    }
+                    this.numFollowing = data.length;
                 })
                 .catch(err => console.error(err));
             }, 
@@ -177,8 +167,11 @@ import Breadcrumb from "../BreadCrumb.vue"
                 })
                 .then(response => response.json())
                 .then((data) => {
-
-                    this.fetchedBooks = data.books;
+                    if (data.success) {
+                        this.fetchedBooks = data.books;
+                    } else {
+                        console.error(data.message);
+                    }
                     
                 })
                 .catch(err => console.error(err));
@@ -215,12 +208,12 @@ import Breadcrumb from "../BreadCrumb.vue"
                 })
                 .then(response => response.json())
                 .then((data) => {
-                if (data.success) {
-                    console.log(data.message);
-                    // Optional: Update local UI state to reflect follow status
-                } else {
-                    console.error(data.message);
-                }
+                    if (data.success) {
+                        console.log(data.message);
+                        // Optional: Update local UI state to reflect follow status
+                    } else {
+                        console.error(data.message);
+                    }
                 })
                 .catch(err => console.error(err));
             
