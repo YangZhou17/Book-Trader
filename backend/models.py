@@ -34,5 +34,25 @@ class Transaction(db.Model):
     transaction_datetime = db.Column(db.DateTime, default=datetime.datetime.utcnow)
     status = db.Column(db.String(20), nullable=True)
 
+class Follower(db.Model):
+    """
+    "who follows THIS user"
+    user_id = the user that is being followed
+    follower_id = the user who follows
+    """
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    follower_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+
+class Following(db.Model):
+    """
+    "whom THIS user is following"
+    user_id = the user who is following
+    following_id = the user being followed
+    """
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    following_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+
 User.books = db.relationship('Book', foreign_keys=[Book.user_id], backref='owner', lazy=True)
 User.bought_or_rented = db.relationship('Transaction', foreign_keys=[Transaction.buyer_renter_id], backref='buyer_renter', lazy=True)

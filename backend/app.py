@@ -12,16 +12,19 @@ def create_app():
 
     with app.app_context():
         from models import User, Book, Transaction
-        db.drop_all()  # For development
+        # db.drop_all()   For development
         db.create_all()
 
     # Register blueprints after creating the app context
     from auth import auth_bp
     from books import books_bp
     from transactions import transactions_bp
+    from follows import follows_bp
+
     app.register_blueprint(auth_bp, url_prefix='/api')
     app.register_blueprint(books_bp, url_prefix='/api')
     app.register_blueprint(transactions_bp, url_prefix='/api')
+    app.register_blueprint(follows_bp, url_prefix='/api')
 
     return app
 

@@ -66,6 +66,17 @@ class Transaction(db.Model):
     # For selling: status can be 'completed'
     # For renting: status is 'ongoing' until returned, then 'returned'
 
+class Follower(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    follower_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+
+class Following(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    following_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+
+
 # Relationships on the User model for clarity
 User.books = db.relationship('Book', foreign_keys=[Book.user_id], backref='owner', lazy=True)
 User.bought_or_rented = db.relationship('Transaction', foreign_keys=[Transaction.buyer_renter_id], backref='buyer_renter', lazy=True)
@@ -290,6 +301,126 @@ def fetch_transactions(username):
         'status': t.status
     } for t in transactions]
     return jsonify({'success': True, 'transactions': transactions_data}), 200
+
+@app.route('/api/follow', methods=['POST'])
+def follow_user():
+    data = request.get_json()
+    follower_name = data.get('follower_name')
+    followed_name = data.get('followed_name')
+
+    if not follower_name or not followed_name:
+        return jsonify({'success': False, 'message': 'Missing follower_name or followed_name'}), 400
+    if follower_name == followed_name:
+        return jsonify({'success': False, 'message': 'A user cannot follow themselves.'}), 400
+
+    follower_user = User.query.filter_by(username=follower_name).first()
+    followed_user = User.query.filter_by(username=followed_name).first()
+    if not follower_user or not followed_user:
+        return jsonify({'success': False, 'message': 'User(s) not found'}), 404
+
+    existing_following = Following.query.filter_by(
+        user_id=follower_user.id,
+        following_id=followed_user.id
+    ).first()
+    if existing_following:
+        return jsonify({
+            'success': False,
+            'message': f'{follower_name} is already following {followed_name}'
+        }), 400
+
+    new_following = Following(
+        user_id=follower_user.id,
+        following_id=followed_user.id
+    )
+    
+    new_follower = Follower(
+        user_id=followed_user.id,
+        follower_id=follower_user.id
+    )
+
+    db.session.add(new_following)
+    db.session.add(new_follower)
+    db.session.commit()
+
+    return jsonify({
+        'success': True,
+        'message': f'{follower_name} is now following {followed_name}'
+    }), 200
+
+@app.route('/api/unfollow', methods=['POST'])
+def unfollow_user():
+    data = request.get_json()
+    follower_name = data.get('follower_name')
+    followed_name = data.get('followed_name')
+
+    if not follower_name or not followed_name:
+        return jsonify({'success': False, 'message': 'Missing follower_name or followed_name'}), 400
+    if follower_name == followed_name:
+        return jsonify({'success': False, 'message': 'A user cannot unfollow themselves.'}), 400
+
+    follower_user = User.query.filter_by(username=follower_name).first()
+    followed_user = User.query.filter_by(username=followed_name).first()
+    if not follower_user or not followed_user:
+        return jsonify({'success': False, 'message': 'User(s) not found'}), 404
+
+    existing_following = Following.query.filter_by(
+        user_id=follower_user.id,
+        following_id=followed_user.id
+    ).first()
+    if existing_following:
+        db.session.delete(existing_following)
+
+    existing_follower = Follower.query.filter_by(
+        user_id=followed_user.id,
+        follower_id=follower_user.id
+    ).first()
+    if existing_follower:
+        db.session.delete(existing_follower)
+
+    db.session.commit()
+
+    return jsonify({
+        'success': True,
+        'message': f'{follower_name} has unfollowed {followed_name}'
+    }), 200
+
+@app.route('/api/<username>/followers', methods=['GET'])
+def get_followers(username):
+    """
+    Fetch all users who follow <username>.
+    """
+    user = User.query.filter_by(username=username).first()
+    if not user:
+        return jsonify({'success': False, 'message': 'User not found'}), 404
+
+    follower_records = Follower.query.filter_by(user_id=user.id).all()
+
+    followers_list = []
+    for record in follower_records:
+        follower_user = db.session.get(User,record.follower_id)
+        if follower_user:
+            followers_list.append({'name': follower_user.username})
+
+    return jsonify(followers_list), 200
+
+@app.route('/api/<username>/following', methods=['GET'])
+def get_following(username):
+    """
+    Fetch all users <username> is following.
+    """
+    user = User.query.filter_by(username=username).first()
+    if not user:
+        return jsonify({'success': False, 'message': 'User not found'}), 404
+
+    following_records = Following.query.filter_by(user_id=user.id).all()
+
+    following_list = []
+    for record in following_records:
+        followed_user = db.session.get(User,record.following_id)
+        if followed_user:
+            following_list.append({'name': followed_user.username})
+
+    return jsonify(following_list), 200
 
 if __name__ == '__main__':
     app.run(debug=True, port=8080)
