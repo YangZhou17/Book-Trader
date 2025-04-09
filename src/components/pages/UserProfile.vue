@@ -18,10 +18,20 @@
                     <el-button v-if="!isCurrentUser" type="primary" @click="follow">Follow</el-button>
                 </el-col>
                 <el-col :span="4">
-                    <p @click="showFollowers">{{numFollowers}} followers</p>
+                    <p v-if="isCurrentUser" @click="showFollowers" style="cursor: pointer;">
+                        {{numFollowers}} followers
+                    </p>
+                    <p v-else>
+                        {{numFollowers}} followers
+                    </p>
                 </el-col>
                 <el-col :span="4">
-                    <p @click="showFollowing">{{numFollowing}} following</p>
+                    <p v-if="isCurrentUser" @click="showFollowing" style="cursor: pointer;">
+                        {{numFollowing}} following
+                    </p>
+                    <p v-else>
+                        {{numFollowing}} following
+                    </p>
                 </el-col>
                 <el-col :span="4">
                     <p>Total {{numTransactions}} transactions</p>
