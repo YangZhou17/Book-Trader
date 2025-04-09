@@ -42,22 +42,23 @@ import Breadcrumb from "../BreadCrumb.vue"
         methods:{
             fetchFollowing(){
                 console.log("fetching followings"); 
-                this.followings =   [
-                                        { name: 'Alice' },
-                                        { name: 'Bob' },
-                                        { name: 'Charlie' }
-                                    ];
-                // let url = "http://localhost:5001/api/" + this.username + "/following" ; 
 
-                // fetch(url, {
-                //     method: 'GET',
-                //     headers: { 'content-type': 'application/json' }
-                // })
-                // .then(response => response.json())
-                // .then((data) => {
-                //     this.numFollowing = data.length;
-                // })
-                // .catch(err => console.error(err));
+                let url = "http://localhost:5001/api/" + this.username + "/following" ; 
+
+                fetch(url, {
+                    method: 'GET',
+                    headers: { 'content-type': 'application/json' }
+                })
+                .then(response => response.json())
+                .then((data) => {
+                    if(!data.success){
+                        console.log(data.message);
+                    }
+                    else{
+                        this.followings = data;
+                    }
+                })
+                .catch(err => console.error(err));
             }, 
         },
             

@@ -155,46 +155,6 @@ import Breadcrumb from "../BreadCrumb.vue"
         },
         data(){
             return{
-                // background :ref(true),
-                // queryInfo: {
-                //     query: '',
-                //     pagenum: 1,
-                //     pagesize: 2,
-                // },
-                // data_num: -1,
-                // value: ref(''),
-                // input: ref(''),
-                // new_name: ref(''),
-                // MessageInfo: reactive({}),
-                // MessageShow: reactive({}),
-                // MessageArray: reactive([]),
-                // options : [
-                //     {
-                //         value: 'my',
-                //         label: 'My Bookshelf',
-                //     },
-                //     {
-                //         value: 'open',
-                //         label: 'Public Bookshelf',
-                //     },
-                // ],
-                // Tvalue: ref([]),
-                // Toptions : [
-                //     {
-                //         value: 'pic',
-                //         label: 'pic',
-                //         children: [
-                //             {
-                //                 value: 'pic_cla',
-                //                 label: 'tmp1',
-                //             },
-                //             {
-                //                 value: 'pic_det',
-                //                 label: 'tmp2',
-                //             },
-                //         ]
-                //     },
-                // ],
                 transactionType: 'selling', 
                 transactionTypes : [
                     {
@@ -222,7 +182,12 @@ import Breadcrumb from "../BreadCrumb.vue"
                 })
                 .then(response => response.json())
                 .then((data) => {
-                    this.fetchedBooks = data.books;
+                    if(!data.success){
+                        console.log(data.message);
+                    }
+                    else{
+                        this.fetchedBooks = data.books;
+                    }
                 })
                 .catch(err => console.error(err));
             },
@@ -234,234 +199,14 @@ import Breadcrumb from "../BreadCrumb.vue"
                 return datetime.split("T")[0];
             },
 
-            // generate_id(index){
-            //     return "name_"+index
-            // },
-            // exportdata(name){
-            //     const data = {"name":name}
-            //     return fetch("/api/setsession",{
-            //         method: 'POST',
-            //         headers:{
-            //             "Content-Type": "application/json",
-            //         },
-            //         body: JSON.stringify(data)
-            //     })
-            //     .then(res=>res.json())
-            //     .then(()=>{
-            //         this.$router.push("/index/manage/dataset/4-2");
-            //     })
-            // },
-            // handleChosenChange(){
-            //     let that = this;
-            //     const data = {"specy":this.Tvalue[0],"type":this.Tvalue[1]}
-            //     return fetch("/api/searchdata",{
-            //         method: 'POST',
-            //         headers: {
-            //             "Content-Type": "application/json",
-            //         },
-            //         body: JSON.stringify(data)
-            //     })
-            //     .then(res => res.json())
-            //     .then((j)=>{
-            //         that.MessageInfo = j.MessageShow;
-            //         that.data_num = j.data_num;
-            //         that.MessageArray = reactive([]);
-            //         for (let item in that.MessageInfo){
-            //             that.MessageArray.push(item);
-            //             if(that.MessageInfo[item]["in_state"]==="finished"){
-            //                 that.MessageInfo[item]["in_state"] = "Completed";
-            //             }
-            //             if(that.MessageInfo[item]["specy"]==="pic"){
-            //                 that.MessageInfo[item]["specy"] = "tmp";
-            //             }
-            //         }
-            //         this.handleCurrentChange(1);
-            //     })
-            // },
-            // insert(name){
-            //     const data = {"name": name}
-            //     return fetch("/api/setsession",{
-            //         method: 'POST',
-            //         headers:{
-            //             "Content-Type": "application/json",
-            //         },
-            //         body: JSON.stringify(data)
-            //     })
-            //     .then(res => res.json())
-            //     .then(()=>{
-            //         this.$router.push("/index/manage/dataset/insert");
-            //     })
-                
-            // },
             toUpload(){
                 this.$router.push("/upload")
             },
-            // get_datanum(){
-            //     let that = this;
-            //     fetch("/api/getnum").then((res) => res.json().then((j) => {
-            //         that.data_num = j.data_num;
-            //         console.log(that.data_num);
-            //     }))
-            // },
-            // multilabel(name,specy){
-            //     const data = {"name": name}
-            //     return fetch("/api/setsession",{
-            //         method: 'POST',
-            //         headers:{
-            //             "Content-Type": "application/json",
-            //         },
-            //         body: JSON.stringify(data)
-            //     })
-            //     .then(res => res.json())
-            //     .then(()=>{
-            //         console.log(specy);
-            //         if(specy==="tmp"){
-            //             const data = {"t_type": "all"};
-            //             fetch("/api/sessiontype",{
-            //                 method: 'POST',
-            //                 headers: {
-            //                     "Content-Type": "application/json",
-            //                 },
-            //                 body: JSON.stringify(data)
-            //             })
-            //             .then((res)=>res.json())
-            //             .then(()=>{
-            //                 this.$router.push("/index/menu3");
-            //             })
-                        
-            //         }
-            //     })
-            },
+        },
             
-            mounted() {
-                this.fetchBooks();
-            }
-
-            // Search Dataset
-        //     Searchbyname(){
-        //         const data = {"name":this.input};
-        //         let that = this;
-        //         return fetch("/api/searchname",{
-        //             method: 'POST',
-        //             headers:{
-        //                 "Content-Type": "application/json",
-        //             },
-        //             body: JSON.stringify(data)
-        //         })
-        //         .then(res => res.json())
-        //         .then((j)=>{
-        //             that.MessageInfo = j.MessageShow;
-        //             that.data_num = j.data_num;
-        //             that.MessageArray = reactive([]);
-        //             for (let item in that.MessageInfo){
-        //                 that.MessageArray.push(item);
-        //                 if(that.MessageInfo[item]["in_state"]==="finished"){
-        //                     that.MessageInfo[item]["in_state"] = "Completed";
-        //                 }
-        //                 if(that.MessageInfo[item]["specy"]==="pic"){
-        //                     that.MessageInfo[item]["specy"] = "pic";
-        //                 }
-        //             }
-        //             this.handleCurrentChange(1);
-        //         })
-
-        //     },
-
-        //     // Change Name
-        //     change_name(name){
-        //         const data = {"new_name":this.new_name,"old_name":name};
-        //         return fetch("/api/changename",{
-        //             method: 'POST',
-        //             headers:{
-        //                 "Content-Type": "application/json",
-        //             },
-        //             body: JSON.stringify(data)
-        //         })
-        //         .then(res => res.json())
-        //         .then(()=>{
-        //             this.$router.push("/index/manage/blank")
-        //         })
-
-        //     },
-        //     show_nametxt(index){
-        //         console.log(index)
-        //         let txt = document.getElementById("name_"+index);
-        //         if(txt.style.visibility==='visible'){
-        //             txt.style.visibility='hidden';
-        //         }
-        //         else{
-        //             txt.style.visibility='visible';
-        //             txt.style.backgroundColor="white";
-        //         }
-        //     },
-
-        //     // Get Data
-        //     get_data(){
-        //         this.get_datanum();
-        //         let that = this;
-        //         fetch("/api/getdata").then((res) => res.json().then((j)=>{
-        //             that.MessageInfo = j.MessageInfo;
-        //             that.MessageArray = reactive([]);
-        //             for (let item in that.MessageInfo){
-        //                 that.MessageArray.push(item);
-        //                 if(that.MessageInfo[item]["in_state"]==="finished"){
-        //                     that.MessageInfo[item]["in_state"] = "Completed";
-        //                 }
-        //                 if(that.MessageInfo[item]["specy"]==="pic"){
-        //                     that.MessageInfo[item]["specy"] = "tmp";
-        //                 }
-        //             }
-        //             this.handleCurrentChange(1);
-        //         }))
-        //     },
-        //     handleSizeChange(newSize){
-        //         this.queryInfo.pagesize = newSize;
-        //         this.handleCurrentChange(1);
-        //     },
-        //     handleCurrentChange(newPage){
-        //         this.queryInfo.pagenum = newPage;
-        //         let start = (this.queryInfo.pagenum - 1) * this.queryInfo.pagesize;
-        //         let end = start + this.queryInfo.pagesize;
-        //         if (this.MessageArray.length < end){
-        //             end = this.MessageArray.length;
-        //         }
-        //         this.MessageShow = reactive({});
-        //         for (let i = start; i < end; i++){
-        //             this.MessageShow[this.MessageArray[i]]=this.MessageInfo[this.MessageArray[i]];
-        //         }
-        //     },
-
-        //     // Used to set the default option for the page form
-        //     setvalue(){
-        //         this.value = this.options[0].value;
-        //     },
-
-        //     // Delete Data
-        //     deletedata(name){
-        //         let that = this;
-        //         const d_name = {"name": name,}
-        //         console.log(d_name)
-        //         return fetch("/api/deletedata",{
-        //             method: 'POST',
-        //             headers: {
-        //                 "Content-Type": "application/json",
-        //             },
-        //             body: JSON.stringify(d_name)
-        //         })
-        //         .then(res => res.json())
-        //         .then(() => {
-        //             if(that.data_num>0){
-        //                 that.data_num = that.data_num - 1;
-        //             }
-        //             this.$router.push("/index/manage/blank")
-        //         })
-        //     }
-        // },
-        // created() {
-        //     this.setvalue();
-        //     this.get_data();
-        // },
-
+        mounted() {
+            this.fetchBooks();
+        }
     }
 </script>
 
