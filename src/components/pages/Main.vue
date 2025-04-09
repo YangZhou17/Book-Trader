@@ -65,7 +65,7 @@
                         <el-link :underline="false" @click="goToUploaderProfile(scope.row.owner)">{{ scope.row.owner }}</el-link>
                     </template>
                 </el-table-column>
-                <el-table-column prop="uploaded_at" label="Uploaded A">
+                <el-table-column prop="uploaded_at" label="Uploaded At">
                     <template v-slot="scope">
                         {{ formatDate(scope.row.uploaded_at) }}
                     </template>
