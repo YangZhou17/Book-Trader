@@ -40,7 +40,7 @@
                 </el-col>
 
 
-                <!-- <el-col :span="4">
+                <el-col :span="4">
                     <el-cascader v-model="Tvalue" :options="Toptions"  placeholder="All" @change="handleChosenChange"/>
                 </el-col>
                 <el-col :span="4">
@@ -52,7 +52,7 @@
                         @change="Searchbyname"
                     >
                     </el-input>
-                </el-col> -->
+                </el-col>
             </el-row>
 
             <!-- displaying books --> 
@@ -65,7 +65,7 @@
                         <el-link :underline="false" @click="goToUploaderProfile(scope.row.owner)">{{ scope.row.owner }}</el-link>
                     </template>
                 </el-table-column>
-                <el-table-column prop="uploaded_at" label="Uploaded At">
+                <el-table-column prop="uploaded_at" label="Uploaded A">
                     <template v-slot="scope">
                         {{ formatDate(scope.row.uploaded_at) }}
                     </template>
