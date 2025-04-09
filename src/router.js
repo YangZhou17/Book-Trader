@@ -23,10 +23,11 @@ const routes = [
                 name: 'Shelf Overview',
             },
             {
-                path: '/profile',
+                path: '/profile/:username',
                 component: () => import('./components/pages/UserProfile.vue'),
                 mata: {title: 'User Profile'},
                 name: 'User Profile',
+                props: true,
             },
             {
                 path: '/followers',

@@ -173,7 +173,7 @@ def fetch_selling_books():
         'owner': book.owner.username,
         'uploaded_at': book.uploaded_at.isoformat()
     } for book in books]
-    return jsonify({'books': books_data}), 200
+    return jsonify({'success': True, 'books': books_data}), 200
 
 @books_bp.route('/books/renting', methods=['GET'])
 def fetch_renting_books():
@@ -186,7 +186,7 @@ def fetch_renting_books():
         'owner': book.owner.username,
         'uploaded_at': book.uploaded_at.isoformat()
     } for book in books]
-    return jsonify({'books': books_data}), 200
+    return jsonify({'success': True, 'books': books_data}), 200
 
 @books_bp.route('/books/search', methods=['GET'])
 def fetch_books_by_parameter():
@@ -287,7 +287,7 @@ def fetch_all_user_books(username):
         'rent_duration': book.rent_duration if book.transaction_type == 'rent' else None,
         'uploaded_at': book.uploaded_at.isoformat()
     } for book in books]
-    return jsonify({'books': books_data}), 200
+    return jsonify({'success': True, 'books': books_data}), 200
 
 @books_bp.route('/books/selling/<username>', methods=['GET'])
 def fetch_user_selling_books(username):
@@ -301,7 +301,7 @@ def fetch_user_selling_books(username):
         'price': book.price,
         'uploaded_at': book.uploaded_at.isoformat()
     } for book in books]
-    return jsonify({'books': books_data}), 200
+    return jsonify({'success': True, 'books': books_data}), 200
 
 @books_bp.route('/books/renting/<username>', methods=['GET'])
 def fetch_user_renting_books(username):
@@ -316,4 +316,4 @@ def fetch_user_renting_books(username):
         'rent_duration': book.rent_duration,
         'uploaded_at': book.uploaded_at.isoformat()
     } for book in books]
-    return jsonify({'books': books_data}), 200
+    return jsonify({'success': True, 'books': books_data}), 200
