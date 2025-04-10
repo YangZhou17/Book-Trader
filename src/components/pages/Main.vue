@@ -40,7 +40,7 @@
                 </el-col>
 
 
-                <el-col :span="4">
+                <!-- <el-col :span="4">
                     <el-cascader v-model="Tvalue" :options="Toptions"  placeholder="All" @change="handleChosenChange"/>
                 </el-col>
                 <el-col :span="4">
@@ -52,7 +52,7 @@
                         @change="Searchbyname"
                     >
                     </el-input>
-                </el-col>
+                </el-col> -->
             </el-row>
 
             <!-- displaying books --> 
