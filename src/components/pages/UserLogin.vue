@@ -68,10 +68,24 @@ export default {
 </script>
 
 <style> 
-body{
-  background-color: beige;
-  text-align: center;
+
+main {
+  height: 100vh;
 }
+
+#login {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: white;
+  padding: 2rem;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  text-align: left;
+  z-index: 10;
+}
+
 #loginButton{
   color: white;
   background-color: burlywood;
