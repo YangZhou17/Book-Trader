@@ -6,7 +6,6 @@
         <!-- Book Information -->
         <div>
             <h3>{{ this.book_name }}</h3>
-            <p><strong>ID:</strong> {{ this.book_id }}</p>
             <p><strong>Price:</strong> {{ this.book_price }}</p>
             <p><strong>Owner:</strong> {{ this.book_owner }}</p>
             <p><strong>Uploaded At:</strong> {{ formatDate(this.book_uploaded) }}</p>
