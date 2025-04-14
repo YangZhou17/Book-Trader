@@ -10,12 +10,9 @@
         <!-- Main Section -->
         <el-main>
             <!-- username and basic stats --> 
-            <el-row>
-                <el-col :span="5">
+            <el-row :gutter="20">
+                <el-col :span="10">
                     <h1>{{username}}</h1>
-                </el-col>
-                <el-col :span="5">
-                    <el-button v-if="!isCurrentUser" type="primary" @click="follow">Follow</el-button>
                 </el-col>
                 <el-col :span="4">
                     <p v-if="isCurrentUser" @click="showFollowers" style="cursor: pointer;">
@@ -34,13 +31,28 @@
                     </p>
                 </el-col>
                 <el-col :span="4">
-                    <p>Total {{numTransactions}} transactions</p>
+                    <p v-if="isCurrentUser" @click="showTransactions" style="cursor: pointer;">
+                        Total {{numTransactions}} transactions
+                    </p>
+                    <p v-else>
+                        Total {{numTransactions}} transactions
+                    </p>
                 </el-col>
             </el-row>
 
+            <!-- follow and contact button -->
+            <el-row :gutter="20" style="width: 80%; margin-top: 20px; margin-left:10%;">
+                <el-col :span="12">
+                    <el-button v-if="!isCurrentUser" type="primary" @click="follow" style="width: 100%;">Follow</el-button>
+                </el-col>
+                <el-col :span="12">
+                    <el-button v-if="!isCurrentUser" type="primary" @click="contact" style="width: 100%;">Contact</el-button>
+                </el-col>
+            </el-row><br><br>
+
             <!-- Bookshelf: selling or renting-->
             <el-row>
-                <el-col :span="2" :offset="20">
+                <el-col :span="2" :offset="21">
                     <el-select v-model="transactionType" class="m-2" placeholder="Selling" style="width: 100px" @change="fetchBooks">
                         <el-option
                             v-for="item in transactionTypes"
@@ -50,19 +62,19 @@
                         />
                     </el-select>
                 </el-col>
-            </el-row>
+            </el-row><br>
 
             <!-- Bookshelf: displaying books --> 
             <el-empty v-if="fetchedBooks.length === 0" description="No book uploaded" />
             <el-table v-if="fetchedBooks.length != 0" :data="fetchedBooks" height="400" style="width: 100%" border>
-                <el-table-column prop="name" label="Name" width="180" />
+                <el-table-column prop="name" label="Name" />
                 <el-table-column prop="price" label="Price" width="180" />
-                <el-table-column prop="uploaded_at" label="Uploaded At">
+                <el-table-column prop="uploaded_at" label="Uploaded At" width="180">
                     <template v-slot="scope">
                         {{ formatDate(scope.row.uploaded_at) }}
                     </template>
                 </el-table-column>
-                <el-table-column v-if="transactionType === 'renting'" prop="rent_duration" label="Duration (days)" width="150" />
+                <el-table-column v-if="transactionType === 'renting'" prop="rent_duration" label="Duration (days)" width="180" />
             </el-table>
         </el-main>
     </el-container>
@@ -102,7 +114,7 @@ import Breadcrumb from "../BreadCrumb.vue"
         },
 
         methods:{
-            // Navigate to followers or following page if clicked 
+            // Navigate to followers, following, transactions page if clicked 
             showFollowers(){
                 console.log("showing followers"); 
                 this.$router.push("/followers");
@@ -113,6 +125,10 @@ import Breadcrumb from "../BreadCrumb.vue"
                 this.$router.push("/following");
             },
 
+            showTransactions(){
+                console.log("showing Transactions"); 
+                this.$router.push("/transactions");
+            },
 
             // Fetch number of followers, followings, total transactions
             fetchFollowers(){
@@ -226,8 +242,11 @@ import Breadcrumb from "../BreadCrumb.vue"
                     }
                 })
                 .catch(err => console.error(err));
-            
             },
+
+            contact(){
+                //TO BE IMPLEMENTED
+            }
 
         },
             

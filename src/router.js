@@ -40,26 +40,26 @@ const routes = [
                 component: () => import('./components/pages/UserFollowing.vue'),
                 mata: {title: 'User Followings'},
                 name: 'User Followings',
-            },
-            // {
-            //     path: '/import',
-            //     component: () => import('./components/pages/Import.vue'),
-            //     mata: {title: 'Import'},
-            //     name: 'Import',
-            // },
-            
+            },  
+            {
+                path: '/transactions',
+                component: () => import('./components/pages/UserTransactions.vue'),
+                mata: {title: 'User Transactions'},
+                name: 'User Transactions',
+            },  
             {
                 path: '/upload',
                 component: () => import('./components/pages/UploadBook.vue'),
                 mata: {title: 'Create Shelf'},
                 name: 'Create Shelf',
             },
-            // {
-            //     path: '/index/manage/blank',
-            //     component: () => import('./components/pages/BlankPage.vue'),
-            //     name: 'blank',
-            //     meta: {title:'blank'}
-            // },
+            {
+                path: '/transactionConfirm',
+                component: () => import('./components/pages/TransactionConfirmation.vue'),
+                mata: {title: 'Confirm Transaction'},
+                name: 'Confirm Transaction',
+                props: true,
+            },
         ]
     }
 ]

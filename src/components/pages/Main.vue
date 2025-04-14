@@ -15,20 +15,8 @@
                     <el-button type="primary" @click="toUpload">Upload Book</el-button>
                 </el-col>
 
-                <!-- My bookshelf/ public bookshelf -->
-                <!-- <el-col :span="2" :offset="12">
-                    <el-select v-model="value" class="m-2" placeholder="Shelf">
-                        <el-option
-                            v-for="item in options"
-                            :key="item.value"
-                            :label="item.label"
-                            :value="item.value"
-                        />
-                    </el-select>
-                </el-col> -->
-
                 <!-- Show selling/renting -->
-                <el-col :span="2" :offset="18">
+                <el-col :span="2" :offset="19">
                     <el-select v-model="transactionType" class="m-2" placeholder="Selling" style="width: 100px" @change="fetchBooks">
                         <el-option
                             v-for="item in transactionTypes"
@@ -53,24 +41,32 @@
                     >
                     </el-input>
                 </el-col> -->
-            </el-row>
+            </el-row><br>
 
             <!-- displaying books --> 
             <el-empty v-if="fetchedBooks.length === 0" description="No books available" />
             <el-table v-if="fetchedBooks.length != 0" :data="fetchedBooks" height="400" style="width: 100%" border>
-                <el-table-column prop="name" label="Name" width="180" />
+                <el-table-column prop="name" label="Name"/>
                 <el-table-column prop="price" label="Price" width="180" />
                 <el-table-column prop="owner" label="Owner" width="180">
                     <template v-slot="scope">
                         <el-link :underline="false" @click="goToUploaderProfile(scope.row.owner)">{{ scope.row.owner }}</el-link>
                     </template>
                 </el-table-column>
-                <el-table-column prop="uploaded_at" label="Uploaded At">
+                <el-table-column prop="uploaded_at" label="Uploaded At" width="180" >
                     <template v-slot="scope">
                         {{ formatDate(scope.row.uploaded_at) }}
                     </template>
                 </el-table-column>
-                <el-table-column v-if="transactionType === 'renting'" prop="rent_duration" label="Duration (days)" width="150" />
+                <el-table-column v-if="transactionType === 'renting'" prop="rent_duration" label="Duration (days)" width="180" />
+                <el-table-column label="Action" width="150">
+                    <template v-slot="scope">
+                        <div v-if="scope.row.owner !== currentUser">
+                            <el-button v-if="transactionType === 'selling'" type="success" @click="buyBook(scope.row)">Buy</el-button>
+                            <el-button v-if="transactionType === 'renting'" type="success" @click="rentBook(scope.row)">Rent</el-button>
+                        </div>
+                    </template>
+                </el-table-column>
             </el-table>
 
             <!-- <el-empty :image-size="250" description="Empty" v-if="value=='open' || data_num==0">
@@ -158,6 +154,7 @@ import Breadcrumb from "../BreadCrumb.vue"
         },
         data(){
             return{
+                currentUser: localStorage.getItem("username") || "",
                 transactionType: 'selling', 
                 transactionTypes : [
                     {
@@ -206,8 +203,39 @@ import Breadcrumb from "../BreadCrumb.vue"
             },
             
             goToUploaderProfile(username) {
-                // Implement navigation to uploader's profile based on username
                 this.$router.push(`/profile/${username}`);
+            },
+
+            // go to transaction confirmation page
+            buyBook(book) {
+                console.log("Buying book:", book);
+                this.$router.push({ 
+                    path: '/transactionConfirm', 
+                    query: { 
+                        book_id: book.id,
+                        book_name: book.name, 
+                        book_price: book.price,
+                        book_owner: book.owner,
+                        book_uploaded: book.uploaded_at, 
+                        transaction_type: 'buy'
+                    }
+                });
+            },
+
+            rentBook(book) {
+                console.log("Renting book:", book);
+                this.$router.push({ 
+                    path: '/transactionConfirm', 
+                    query: { 
+                        book_id: book.id,
+                        book_name: book.name, 
+                        book_price: book.price,
+                        book_owner: book.owner,
+                        book_uploaded: book.uploaded_at, 
+                        book_rent_duration: book.rent_duration,
+                        transaction_type: 'rent'
+                    }
+                });
             },
         },
             
