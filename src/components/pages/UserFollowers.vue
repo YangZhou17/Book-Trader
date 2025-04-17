@@ -19,14 +19,14 @@
             <el-empty v-if="followers.length === 0" description="No followers" />
             <el-table v-if="followers.length != 0" :data="followers" :show-header="false" height="400" style="width: 100%" border>
                 <!-- First column: Name -->
-                <el-table-column prop="name">
+                <el-table-column prop="name" align="center">
                 <template #default="scope">
                     {{ scope.row.name }}
                 </template>
                 </el-table-column>
 
                 <!-- Second column: Follow button -->
-                <el-table-column>
+                <el-table-column align="center">
                 <template #default="scope">
                     <el-button type="primary" size="mini" @click="follow(scope.row)" :disabled="scope.row.followed">Follow</el-button>
                 </template>
@@ -92,8 +92,9 @@ import Breadcrumb from "../BreadCrumb.vue"
 
             // check if the current followers is already followed by current user (in following list)
             markAlreadyFollowed() {
+                const followingNames = this.followings.map(user => user.name.toLowerCase());
                 this.followers.forEach(follower => {
-                    if (this.followingList.includes(follower.name)) {
+                    if (followingNames.includes(follower.name.toLowerCase())){
                         follower.followed = true;
                     }
                 });
@@ -129,8 +130,8 @@ import Breadcrumb from "../BreadCrumb.vue"
         },
             
         mounted() {
+            this.fetchFollowing();
             this.fetchFollowers(); 
-            this.fetchFollowing()
         }
 
     }

@@ -9,22 +9,16 @@
 
         <!-- Main Section -->
         <el-main>
+
+            <!-- Page title --> 
+            <el-row>
+                <h1>{{this.pageTitle}}</h1>
+            </el-row><br>
+
             <el-row>
                 <!-- Upload book button --> 
                 <el-col :span="2">
                     <el-button type="primary" @click="toUpload">Upload Book</el-button>
-                </el-col>
-
-                <!-- Show selling/renting -->
-                <el-col :span="2" :offset="19">
-                    <el-select v-model="transactionType" class="m-2" placeholder="Selling" style="width: 100px" @change="fetchBooks">
-                        <el-option
-                            v-for="item in transactionTypes"
-                            :key="item.value"
-                            :label="item.label"
-                            :value="item.value"
-                        />
-                    </el-select>
                 </el-col>
 
 
@@ -47,23 +41,28 @@
             <el-empty v-if="fetchedBooks.length === 0" description="No books available" />
             <el-table v-if="fetchedBooks.length != 0" :data="fetchedBooks" height="400" style="width: 100%" border>
                 <el-table-column prop="name" label="Name"/>
-                <el-table-column prop="price" label="Price" width="180" />
-                <el-table-column prop="owner" label="Owner" width="180">
+                <el-table-column prop="transaction_type" label="Transaction Type" width="100" align="center"/>
+                <el-table-column prop="price" label="Price" width="180" align="center"/>
+                <el-table-column prop="owner" label="Owner" width="180" align="center">
                     <template v-slot="scope">
                         <el-link :underline="false" @click="goToUploaderProfile(scope.row.owner)">{{ scope.row.owner }}</el-link>
                     </template>
                 </el-table-column>
-                <el-table-column prop="uploaded_at" label="Uploaded At" width="180" >
+                <el-table-column prop="uploaded_at" label="Uploaded At" width="180" align="center">
                     <template v-slot="scope">
                         {{ formatDate(scope.row.uploaded_at) }}
                     </template>
                 </el-table-column>
-                <el-table-column v-if="transactionType === 'renting'" prop="rent_duration" label="Duration (days)" width="180" />
-                <el-table-column label="Action" width="150">
+                <el-table-column label="Rent Duration (days)" width="180" align="center">
+                    <template v-slot="scope">
+                        {{ scope.row.rent_duration ? scope.row.rent_duration : '(do not apply)' }}
+                    </template>
+                </el-table-column>
+                <el-table-column label="Action" width="150" align="center">
                     <template v-slot="scope">
                         <div v-if="scope.row.owner !== currentUser">
-                            <el-button v-if="transactionType === 'selling'" type="success" @click="buyBook(scope.row)">Buy</el-button>
-                            <el-button v-if="transactionType === 'renting'" type="success" @click="rentBook(scope.row)">Rent</el-button>
+                            <el-button v-if="scope.row.transaction_type === 'sell'" type="success" @click="buyBook(scope.row)">Buy</el-button>
+                            <el-button v-if="scope.row.transaction_type === 'rent'" type="success" @click="rentBook(scope.row)">Rent</el-button>
                         </div>
                     </template>
                 </el-table-column>
@@ -148,33 +147,23 @@
 <script>
 import Breadcrumb from "../BreadCrumb.vue"
     export default{
-        name: "ManageDateSet",
+        name: "MainPage",
         components:{
             Breadcrumb,
         },
         data(){
             return{
                 currentUser: localStorage.getItem("username") || "",
-                transactionType: 'selling', 
-                transactionTypes : [
-                    {
-                        value: 'selling', 
-                        label: "Selling", 
-                    }, 
-                    {
-                        value: 'renting', 
-                        label: 'Renting', 
-                    },
-                ],
+                pageType: "",
+                pageTitle: "",
                 fetchedBooks: [], 
             }
         },
 
         methods:{
-            // Fetch selling/renting books by user selection
             fetchBooks(){
-                console.log("Fetching data for:", this.transactionType);
-                let url = "http://localhost:5001/api/books/" + this.transactionType; 
+                console.log("Fetching data for page:", this.pageType);
+                let url = "http://localhost:5001/api/books/" + this.pageType + "/" + this.currentUser; 
                
                 fetch(url, {
                     method: 'GET',
@@ -183,9 +172,10 @@ import Breadcrumb from "../BreadCrumb.vue"
                 .then(response => response.json())
                 .then((data) => {
                     if (data.success) {
+                        console.log("Successfully fetched books");
                         this.fetchedBooks = data.books;
                     } else {
-                        console.error(data.message);
+                        console.log(data.message);
                     }
                 })
                 .catch(err => console.error(err));
@@ -196,6 +186,18 @@ import Breadcrumb from "../BreadCrumb.vue"
                     return ""; 
                 }
                 return datetime.split("T")[0];
+            },
+
+            renderPageTitle(){
+                if(this.pageType === 'nearby'){
+                    this.pageTitle = "Books From Your School"; 
+                }
+                else if(this.pageType === 'following'){
+                    this.pageTitle = "Books From People You Are Following"; 
+                }
+                else{
+                    this.pageTitle = "Books Recommended For You"; 
+                }
             },
 
             toUpload(){
@@ -240,6 +242,8 @@ import Breadcrumb from "../BreadCrumb.vue"
         },
             
         mounted() {
+            this.pageType = this.$route.query.pageType;
+            this.renderPageTitle();
             this.fetchBooks();
         }
     }
@@ -252,58 +256,4 @@ import Breadcrumb from "../BreadCrumb.vue"
     .el-divider{
         margin: 0;
     }
-    .between{
-        margin: 10px;
-    }
-    .lower{
-        margin: 30px;
-    }
-    .table-header{
-        display: flex;
-        padding: 15px;
-        border: 1px solid #eee;
-        border-bottom: none;
-        background-color: #f7f7f7;
-        justify-content: space-between;
-    }
-    .table-header .title .inline-editor .el-icon{
-        margin-left:10px;
-        padding-bottom: -10px;
-    }
-    .table-header .title{
-        display: flex;
-        flex-direction: row;
-        align-items: center;
-        padding-bottom: -10px;
-        font-size: 14px;
-    }
-    .table-header .title .inline-editor{
-        margin-right: 20px;
-        cursor: pointer;
-        display: inline-block;
-        white-space: nowrap;
-    }
-    .table-header .title .inline-editor-initial-txt{
-        max-width: 360px;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-    }
-    .table-header .op{
-        display: flex;
-        flex-direction: row;
-        align-items: flex-end;
-    }
-    .table-header .op .op-item{
-        font-size: 14px;
-        cursor: pointer;
-        margin-right: 22px;
-        color: #000;
-        text-decoration: none;
-    }
-    .table-header .op .op-item span{
-        font-size: 12px;
-        margin-left: 3px;
-    }
-
 </style>

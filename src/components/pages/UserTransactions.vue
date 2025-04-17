@@ -19,21 +19,21 @@
             <el-empty v-if="transactions.length === 0" description="No Transactions" />
             <el-table v-if="transactions.length != 0" :data="transactions" height="400" style="width: 100%" border>
                 <el-table-column prop="book_name" label="Book Name" />
-                <el-table-column prop="transaction_type" label="Transaction Type" width="100" />
-                <el-table-column prop="price" label="Price" width="100" />
-                <el-table-column prop="seller" label="Seller" width="150">
+                <el-table-column prop="transaction_type" label="Transaction Type" width="100" align="center"/>
+                <el-table-column prop="price" label="Price" width="100" align="center"/>
+                <el-table-column prop="seller" label="Seller" width="150" align="center">
                     <template v-slot="scope">
                         <el-link :underline="false" @click="goToUploaderProfile(scope.row.seller)">{{ scope.row.seller }}</el-link>
                     </template>
                 </el-table-column>
-                <el-table-column prop="buyer_renter" label="Buyer/Renter" width="150" />
-                <el-table-column prop="transaction_datetime" label="Transaction Date" width="150">
+                <el-table-column prop="buyer_renter" label="Buyer/Renter" width="150" align="center"/>
+                <el-table-column prop="transaction_datetime" label="Transaction Date" width="150" align="center">
                     <template v-slot="scope">
                         {{ formatDate(scope.row.transaction_datetime) }}
                     </template>
                 </el-table-column>
-                <el-table-column prop="rent_duration" label="Rent Duration (days)" width="120" />
-                <el-table-column prop="status" label="Status" width="180" />
+                <el-table-column prop="rent_duration" label="Rent Duration (days)" width="120" align="center"/>
+                <el-table-column prop="status" label="Status" width="180" align="center"/>
             </el-table>
         </el-main>
     </el-container>

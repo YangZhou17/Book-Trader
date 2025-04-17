@@ -68,13 +68,13 @@
             <el-empty v-if="fetchedBooks.length === 0" description="No book uploaded" />
             <el-table v-if="fetchedBooks.length != 0" :data="fetchedBooks" height="400" style="width: 100%" border>
                 <el-table-column prop="name" label="Name" />
-                <el-table-column prop="price" label="Price" width="180" />
-                <el-table-column prop="uploaded_at" label="Uploaded At" width="180">
+                <el-table-column prop="price" label="Price" width="180" align="center"/>
+                <el-table-column prop="uploaded_at" label="Uploaded At" width="180" align="center">
                     <template v-slot="scope">
                         {{ formatDate(scope.row.uploaded_at) }}
                     </template>
                 </el-table-column>
-                <el-table-column v-if="transactionType === 'renting'" prop="rent_duration" label="Duration (days)" width="180" />
+                <el-table-column v-if="transactionType === 'renting'" prop="rent_duration" label="Duration (days)" width="180" align="center"/>
             </el-table>
         </el-main>
     </el-container>
