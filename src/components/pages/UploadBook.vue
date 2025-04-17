@@ -105,7 +105,12 @@ export default{
 
         // cancel button 
         cancel(){
-            this.$router.push("/main")
+            this.$router.push({ 
+                    path: '/main', 
+                    query: { 
+                        pageType: "recommend",
+                    }
+                });
         },
 
         // Upload book

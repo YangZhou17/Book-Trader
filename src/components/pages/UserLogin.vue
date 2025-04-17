@@ -50,7 +50,12 @@ export default {
         if(data.success){
           localStorage.setItem("username", this.username);
           console.log("You have logged in successfully!");
-          this.$router.push('/main');
+          this.$router.push({ 
+                    path: '/main', 
+                    query: { 
+                        pageType: "recommend",
+                    }
+                  });
         }
         else if (data.userExists){
           this.message = "Login failed! Incorrect password.";

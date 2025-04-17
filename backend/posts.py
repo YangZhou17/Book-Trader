@@ -1,8 +1,10 @@
-from flask import request, jsonify
+from flask import Blueprint, request, jsonify
 from models import User, Book, Following
 from extensions import db
 from books import books_bp
 from sqlalchemy.sql import func
+
+posts_bp = Blueprint('posts', __name__)
 
 @books_bp.route('/books/nearby/<username>', methods=['GET'])
 def fetch_nearby_books(username):

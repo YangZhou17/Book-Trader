@@ -21,6 +21,7 @@ const routes = [
                 component: () => import('./components/pages/Main.vue'),
                 mata: {title: 'Shelf Overview'},
                 name: 'Shelf Overview',
+                props: true,
             },
             {
                 path: '/profile/:username',
