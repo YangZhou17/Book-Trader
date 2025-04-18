@@ -26,3 +26,7 @@ backend/__pycache__/
 backend/instance/
 backend/venv/
 instance/
+
+# Cache files
+yarn.lock
+package-lock.json
