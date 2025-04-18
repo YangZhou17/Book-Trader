@@ -17,7 +17,7 @@
   
         <!-- Search bar -->
         <el-row v-if="pageType === 'recommend'" :gutter="12" align="middle">
-          <el-col :span="6">
+          <el-col :span="4">
             <el-input
               v-model="searchQuery"
               placeholder="Search books by name"
