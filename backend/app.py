@@ -21,12 +21,14 @@ def create_app():
     from transactions import transactions_bp
     from follows import follows_bp
     from posts import posts_bp
+    from users import users_bp
 
     app.register_blueprint(auth_bp, url_prefix='/api')
     app.register_blueprint(books_bp, url_prefix='/api')
     app.register_blueprint(transactions_bp, url_prefix='/api')
     app.register_blueprint(follows_bp, url_prefix='/api')
     app.register_blueprint(posts_bp, url_prefix='/api')
+    app.register_blueprint(users_bp)
 
     return app
 

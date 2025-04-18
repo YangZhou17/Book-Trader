@@ -107,11 +107,26 @@ export default {
             }
         }, 
 
-        contact(){
-            console.log("sending email");
-            // TO BE IMPLEMENTED
-            // send email
-        },
+        contact() {
+                console.log("Contacting user:", this.book_owner);
+                const url = `http://localhost:5001/api/user/${this.book_owner}`;
+
+                fetch(url, {
+                    method: 'GET',
+                    headers: { 'Content-Type': 'application/json' }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success && data.email) {
+                    console.log("User's email:", data.email);
+                    // Open system email client
+                    window.location.href = `mailto:${data.email}`;
+                    } else {
+                    console.error('Could not fetch email:', data.message || data);
+                    }
+                })
+                .catch(err => console.error('Error contacting backend:', err));
+            },
 
         cancel(){
             this.$router.push({ 

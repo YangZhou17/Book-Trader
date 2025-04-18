@@ -244,12 +244,25 @@ import Breadcrumb from "../BreadCrumb.vue"
                 .catch(err => console.error(err));
             },
 
-            contact(){
-                //TO BE IMPLEMENTED
+            contact() {
                 console.log("Contacting user:", this.username);
+                const url = `http://localhost:5001/api/user/${this.username}`;
 
-                // Fetch the user's email address from the backend
-                // const url = "http://localhost:5001/api/user/" + this.username;
+                fetch(url, {
+                    method: 'GET',
+                    headers: { 'Content-Type': 'application/json' }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success && data.email) {
+                    console.log("User's email:", data.email);
+                    // Open system email client
+                    window.location.href = `mailto:${data.email}`;
+                    } else {
+                    console.error('Could not fetch email:', data.message || data);
+                    }
+                })
+                .catch(err => console.error('Error contacting backend:', err));
             }
 
         },
