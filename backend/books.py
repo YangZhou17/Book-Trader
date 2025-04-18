@@ -198,6 +198,8 @@ def fetch_books_by_parameter():
     max_price = request.args.get('max_price')
     rent_duration = request.args.get('rent_duration')
 
+    print(f"Search parameters: book_name={book_name}, transaction_type={transaction_type}, username={username}, min_price={min_price}, max_price={max_price}, rent_duration={rent_duration}")
+
     # Ensure that at least one search parameter has been provided.
     if not (book_name or transaction_type or username or min_price or max_price or rent_duration):
         return jsonify({'success': False, 'message': 'At least one search parameter must be provided.'}), 400
