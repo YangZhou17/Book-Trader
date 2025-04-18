@@ -246,6 +246,10 @@ import Breadcrumb from "../BreadCrumb.vue"
 
             contact(){
                 //TO BE IMPLEMENTED
+                console.log("Contacting user:", this.username);
+
+                // Fetch the user's email address from the backend
+                // const url = "http://localhost:5001/api/user/" + this.username;
             }
 
         },

@@ -17,6 +17,12 @@ def login():
 
 @auth_bp.route('/register', methods=['POST', 'OPTIONS'])
 def register():
+    # const data = {
+    #     'username': this.username,
+    #     'email': this.email, 
+    #     'school': this.selectedSchool, 
+    #     'password': this.password
+    #   };
     if request.method == 'OPTIONS':
         response = make_response()
         response.headers.add("Access-Control-Allow-Origin", "*")
@@ -26,7 +32,9 @@ def register():
     data = request.get_json()
     if User.query.filter_by(username=data['username']).first():
         return jsonify({'success': False, 'userExists': True}), 409
-    new_user = User(username=data['username'])
+    if User.query.filter_by(email=data['email']).first():
+        return jsonify({'success': False, 'userExists': True}), 409
+    new_user = User(username=data['username'], email=data['email'], school=data['school'])
     new_user.set_password(data['password'])
     db.session.add(new_user)
     db.session.commit()

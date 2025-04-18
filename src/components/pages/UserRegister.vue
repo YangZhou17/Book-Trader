@@ -82,8 +82,8 @@ export default {
 
       const data = {
         'username': this.username,
-        // 'email': this.email, 
-        // 'school': this.selectedSchool, 
+        'email': this.email, 
+        'school': this.selectedSchool, 
         'password': this.password
       };
       console.log(data);
