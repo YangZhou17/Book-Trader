@@ -19,8 +19,8 @@ const routes = [
             {
                 path: '/main',
                 component: () => import('./components/pages/Main.vue'),
-                mata: {title: 'Shelf Overview'},
-                name: 'Shelf Overview',
+                mata: {title: 'Book List'},
+                name: 'Book List',
                 props: true,
             },
             {
@@ -51,8 +51,8 @@ const routes = [
             {
                 path: '/upload',
                 component: () => import('./components/pages/UploadBook.vue'),
-                mata: {title: 'Create Shelf'},
-                name: 'Create Shelf',
+                mata: {title: 'Upload Book'},
+                name: 'Upload Book',
             },
             {
                 path: '/transactionConfirm',

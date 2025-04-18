@@ -38,7 +38,6 @@ export default {
         'username': this.username, 
         'password': this.password
         };
-      console.log(data);
 
       fetch("http://localhost:5001/api/login", {
         method: 'POST',

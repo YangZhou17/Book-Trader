@@ -15,14 +15,8 @@
         </el-row>
         <br />
   
-        <!-- Controls: Upload + Search -->
-        <el-row :gutter="12" align="middle">
-          <!-- Upload book button --> 
-          <el-col :span="4">
-            <el-button type="primary" @click="toUpload">Upload Book</el-button>
-          </el-col>
-  
-          <!-- Search bar -->
+       <!-- Search bar -->
+        <el-row v-if="this.pageType==='recommend'" :gutter="12" align="middle">
           <el-col :span="8">
             <el-input
               v-model="searchQuery"
@@ -51,7 +45,7 @@
           <el-table-column
             prop="transaction_type"
             label="Transaction Type"
-            width="120"
+            width="100"
             align="center"
           />
           <el-table-column
@@ -102,10 +96,10 @@
           </el-table-column>
         </el-table>
       </el-main>
-    </el-container>
-  </template>
+  </el-container>
+</template>
   
-  <script>
+<script>
   import Breadcrumb from "../BreadCrumb.vue";
   
   export default {
@@ -122,8 +116,24 @@
         searchQuery: "",
       };
     },
+
+    watch: {
+      '$route.query.pageType': {
+        immediate: true,
+        handler(newVal) {
+          this.loadPage(newVal);
+        }
+      }
+    },
   
     methods: {
+      loadPage(type) {
+        console.log("Loading main page of type: " + type)
+        this.pageType = this.$route.query.pageType;
+        this.renderPageTitle();
+        this.fetchBooks();
+      }, 
+
       fetchBooks() {
         // original fetch by pageType
         const url = `http://localhost:5001/api/books/${this.pageType}/${this.currentUser}`;
@@ -220,12 +230,6 @@
           },
         });
       },
-    },
-  
-    mounted() {
-      this.pageType = this.$route.query.pageType;
-      this.renderPageTitle();
-      this.fetchBooks();
     },
   };
   </script>
