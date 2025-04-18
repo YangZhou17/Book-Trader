@@ -10,7 +10,7 @@
         <!-- Main Section -->
         <el-main>
              <el-row>
-                <el-col :span="4">
+                <el-col align="left">
                     <h1>Transactions of {{username}}</h1>
                 </el-col>
             </el-row>

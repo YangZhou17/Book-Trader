@@ -1,4 +1,3 @@
-<!-- Create Shelf Page -->
 <template>
     <el-container>
         <!-- Header Section -->
@@ -10,7 +9,7 @@
         <!-- Main Section -->
         <el-main>
 
-            <!-- Form to Create Shelf -->
+            <!-- Form to Upload Book -->
             <el-form :model="form" label-width="120px" style="max-width: 650px">
                 <!-- book name --> 
                 <el-form-item label="Book Name">

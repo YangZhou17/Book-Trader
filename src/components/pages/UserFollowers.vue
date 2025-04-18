@@ -28,7 +28,7 @@
                 <!-- Second column: Follow button -->
                 <el-table-column align="center">
                 <template #default="scope">
-                    <el-button type="primary" size="mini" @click="follow(scope.row)" :disabled="scope.row.followed">Follow</el-button>
+                    <el-button type="primary" size="small" @click="follow(scope.row)" :disabled="scope.row.followed">Follow</el-button>
                 </template>
                 </el-table-column>
             </el-table>

@@ -1,7 +1,7 @@
 <!-- BreadCrumb -->
 <template>
     <el-breadcrumb separator=">">
-        <el-breadcrumb-item :to="{ path: '/' }">Home</el-breadcrumb-item>
+        <el-breadcrumb-item :to="{ path: '/main', query: { pageType: 'recommend' } }">Home</el-breadcrumb-item>
         <template v-for="(item, index) in breadList">
           <el-breadcrumb-item
             v-if="item.name"
