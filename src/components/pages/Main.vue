@@ -3,26 +3,67 @@
     <el-container>
       <!-- Header Element -->
       <el-header>
-        <Breadcrumb></Breadcrumb>
+        <Breadcrumb />
       </el-header>
       <el-divider />
   
       <!-- Main Section -->
       <el-main>
-        <!-- Page title --> 
+        <!-- Page title -->
         <el-row>
           <h1>{{ pageTitle }}</h1>
         </el-row>
         <br />
   
-       <!-- Search bar -->
-        <el-row v-if="this.pageType==='recommend'" :gutter="12" align="middle">
-          <el-col :span="8">
+        <!-- Search bar -->
+        <el-row v-if="pageType === 'recommend'" :gutter="12" align="middle">
+          <el-col :span="6">
             <el-input
               v-model="searchQuery"
               placeholder="Search books by name"
               clearable
               prefix-icon="el-icon-search"
+              @keyup.enter="searchBooks"
+            />
+          </el-col>
+          <el-col :span="4">
+            <el-select v-model="transactionType" placeholder="Transaction Type" clearable>
+              <el-option label="Sell" value="sell" />
+              <el-option label="Rent" value="rent" />
+            </el-select>
+          </el-col>
+          <el-col :span="4">
+            <el-input
+              v-model="usernameFilter"
+              placeholder="Owner username"
+              clearable
+              @keyup.enter="searchBooks"
+            />
+          </el-col>
+          <el-col :span="3">
+            <el-input-number
+              v-model="minPrice"
+              :min="0"
+              placeholder="Min Price"
+              style="width: 100%"
+              @keyup.enter="searchBooks"
+            />
+          </el-col>
+          <el-col :span="3">
+            <el-input-number
+              v-model="maxPrice"
+              :min="0"
+              placeholder="Max Price"
+              style="width: 100%"
+              @keyup.enter="searchBooks"
+            />
+          </el-col>
+          <el-col :span="4">
+            <el-input-number
+              v-model="rentDuration"
+              :min="0"
+              placeholder="Rent Duration (days)"
+              style="width: 100%"
               @keyup.enter="searchBooks"
             />
           </el-col>
@@ -32,7 +73,7 @@
         </el-row>
         <br />
   
-        <!-- displaying books --> 
+        <!-- displaying books -->
         <el-empty v-if="fetchedBooks.length === 0" description="No books found" />
         <el-table
           v-else
@@ -45,7 +86,7 @@
           <el-table-column
             prop="transaction_type"
             label="Transaction Type"
-            width="100"
+            width="120"
             align="center"
           />
           <el-table-column
@@ -55,9 +96,12 @@
             align="center"
           />
           <el-table-column prop="owner" label="Owner" width="140" align="center">
-            <template v-slot="scope">
-              <el-link :underline="false" @click="goToUploaderProfile(scope.row.owner)">
-                {{ scope.row.owner }}
+            <template v-slot="{ row }">
+              <el-link
+                :underline="false"
+                @click="goToUploaderProfile(row.owner)"
+              >
+                {{ row.owner }}
               </el-link>
             </template>
           </el-table-column>
@@ -67,46 +111,50 @@
             width="140"
             align="center"
           >
-            <template v-slot="scope">
-              {{ formatDate(scope.row.uploaded_at) }}
+            <template v-slot="{ row }">
+              {{ formatDate(row.uploaded_at) }}
             </template>
           </el-table-column>
-          <el-table-column label="Rent Duration (days)" width="160" align="center">
-            <template v-slot="scope">
-              {{ scope.row.rent_duration || '(n/a)' }}
+          <el-table-column
+            label="Rent Duration (days)"
+            width="160"
+            align="center"
+          >
+            <template v-slot="{ row }">
+              {{ row.rent_duration || '(n/a)' }}
             </template>
           </el-table-column>
           <el-table-column label="Action" width="150" align="center">
-            <template v-slot="scope">
-              <div v-if="scope.row.owner !== currentUser">
+            <template v-slot="{ row }">
+              <div v-if="row.owner !== currentUser">
                 <el-button
-                  v-if="scope.row.transaction_type === 'sell'"
+                  v-if="row.transaction_type === 'sell'"
                   type="success"
-                  @click="buyBook(scope.row)"
-                  >Buy</el-button
+                  @click="buyBook(row)"
                 >
+                  Buy
+                </el-button>
                 <el-button
-                  v-else-if="scope.row.transaction_type === 'rent'"
+                  v-else-if="row.transaction_type === 'rent'"
                   type="success"
-                  @click="rentBook(scope.row)"
-                  >Rent</el-button
+                  @click="rentBook(row)"
                 >
+                  Rent
+                </el-button>
               </div>
             </template>
           </el-table-column>
         </el-table>
       </el-main>
-  </el-container>
-</template>
+    </el-container>
+  </template>
   
-<script>
+  <script>
   import Breadcrumb from "../BreadCrumb.vue";
   
   export default {
     name: "MainPage",
-    components: {
-      Breadcrumb,
-    },
+    components: { Breadcrumb },
     data() {
       return {
         currentUser: localStorage.getItem("username") || "",
@@ -114,28 +162,32 @@
         pageTitle: "",
         fetchedBooks: [],
         searchQuery: "",
+        transactionType: "",
+        usernameFilter: "",
+        minPrice: null,
+        maxPrice: null,
+        rentDuration: null,
       };
     },
-
+  
     watch: {
       '$route.query.pageType': {
         immediate: true,
         handler(newVal) {
           this.loadPage(newVal);
-        }
-      }
+        },
+      },
     },
   
     methods: {
       loadPage(type) {
-        console.log("Loading main page of type: " + type)
+        console.log("Loading main page of type: " + type);
         this.pageType = this.$route.query.pageType;
         this.renderPageTitle();
         this.fetchBooks();
-      }, 
-
+      },
+  
       fetchBooks() {
-        // original fetch by pageType
         const url = `http://localhost:5001/api/books/${this.pageType}/${this.currentUser}`;
         fetch(url, {
           method: "GET",
@@ -151,10 +203,24 @@
       },
   
       searchBooks() {
-        // build query params
         const params = new URLSearchParams();
         if (this.searchQuery.trim()) {
           params.append("book_name", this.searchQuery.trim());
+        }
+        if (this.transactionType) {
+          params.append("transaction_type", this.transactionType);
+        }
+        if (this.usernameFilter.trim()) {
+          params.append("username", this.usernameFilter.trim());
+        }
+        if (this.minPrice !== null) {
+          params.append("min_price", this.minPrice);
+        }
+        if (this.maxPrice !== null) {
+          params.append("max_price", this.maxPrice);
+        }
+        if (this.rentDuration !== null) {
+          params.append("rent_duration", this.rentDuration);
         }
   
         const url = `http://localhost:5001/api/books/search?${params.toString()}`;
@@ -166,7 +232,6 @@
           .then((data) => {
             if (data.success) {
               this.fetchedBooks = data.books;
-              console.log(this.fetchedBooks);
             } else {
               this.$message.warning(data.message || "Search failed");
             }
@@ -242,3 +307,4 @@
     margin: 0;
   }
   </style>
+  
