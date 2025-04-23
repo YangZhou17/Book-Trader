@@ -54,6 +54,12 @@ export default {
             console.log("contact button clicked");
             this.buyOrRent(); 
             this.contact();
+            this.$router.push({ 
+                path: '/main', 
+                query: { 
+                    pageType: "recommend",
+                }
+            });
         }, 
 
         buyOrRent(){
