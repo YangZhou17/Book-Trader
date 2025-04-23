@@ -10,7 +10,7 @@
         <el-main>
 
             <!-- Form to Upload Book -->
-            <el-form :model="form" label-width="120px" style="max-width: 650px">
+            <el-form label-width="120px" style="max-width: 650px">
                 <!-- book name --> 
                 <el-form-item label="Book Name">
                     <el-input id="input_book_name" v-model="bookName" placeholder="Enter book name "/>
@@ -139,7 +139,12 @@ export default{
                 console.log(data);
                 if(data.success){
                     console.log("You have uploaded a book successfully");
-                    this.$router.push('/main');
+                    this.$router.push({ 
+                        path: '/main', 
+                        query: { 
+                            pageType: "recommend",
+                        }
+                    });
                 }
                 else{
                     this.message = "Upload failed!";

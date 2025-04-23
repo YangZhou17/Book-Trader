@@ -16,7 +16,7 @@
         class="el-menu-vertical-demo"
         mode="vertical"
       >
-        <el-menu-item index="/main?pageType=recommend">
+        <el-menu-item :index="'main'" @click="navToRecommend">
           <el-icon><Star /></el-icon>
           <span>Recommended Books</span>
         </el-menu-item>
@@ -72,6 +72,16 @@ export default {
         console.error("No username found in local storage");
         this.$router.push("/login");
       }
+    }, 
+
+    navToRecommend(){
+      this.$router.push({ 
+        path: '/main', 
+        query: { 
+          pageType: 'recommend', 
+          t: Date.now()  
+        }
+      });
     }
   },
 
