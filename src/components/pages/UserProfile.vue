@@ -75,6 +75,11 @@
                     </template>
                 </el-table-column>
                 <el-table-column v-if="transactionType === 'renting'" prop="rent_duration" label="Duration (days)" width="180" align="center"/>
+                <el-table-column v-if="isCurrentUser" label="Action" width="120" align="center">
+                    <template v-slot="scope">
+                        <el-button type="danger" size="small" @click="deleteBook(scope.row)"> Delete </el-button>
+                    </template>
+                </el-table-column>
             </el-table>
         </el-main>
     </el-container>
@@ -94,7 +99,6 @@ import Breadcrumb from "../BreadCrumb.vue"
         props: ['username'],
         data(){
             return{
-                //username: localStorage.getItem("username") || "",
                 numFollowers: 0, 
                 numFollowing: 0, 
                 numTransactions: 0, 
@@ -210,6 +214,36 @@ import Breadcrumb from "../BreadCrumb.vue"
                 return datetime.split("T")[0];
             },
 
+            // Delete book
+            deleteBook(book) {
+                if (!confirm(`Are you sure you want to delete the book "${book.name}"?`)) {
+                    return;
+                }
+                const url = "http://localhost:5001/api/delete"; 
+                const data = {
+                    username: this.username,  
+                    book_id: book.id, 
+                };
+                console.log(data);
+
+                fetch(url, {
+                    method: 'DELETE',
+                    body: JSON.stringify(data),
+                    headers: { 'Content-Type': 'application/json' }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        console.log("Book deleted successfully");
+                        this.fetchBooks();
+                    } else {
+                        console.error("Failed to delete book:", data.message);
+                    }
+                })
+                .catch(err => console.error("Delete error:", err));
+            },
+            
+            // Follow user 
             follow() {
                 const currentUser = localStorage.getItem("username");
                 const userToFollow = this.username; // Username of the profile being viewed
@@ -223,20 +257,20 @@ import Breadcrumb from "../BreadCrumb.vue"
 
                 const url = "http://localhost:5001/api/follow";
                 const data = {
-                follower_name: currentUser,  // Current logged-in user
-                followed_name: userToFollow, // User that current user is trying to follow
+                    follower_name: currentUser,  // Current logged-in user
+                    followed_name: userToFollow, // User that current user is trying to follow
                 };
 
                 fetch(url, {
-                method: 'POST',
-                body: JSON.stringify(data),
-                headers: { 'content-type': 'application/json' }
+                    method: 'POST',
+                    body: JSON.stringify(data),
+                    headers: { 'content-type': 'application/json' }
                 })
                 .then(response => response.json())
                 .then((data) => {
                     if (data.success) {
                         console.log(data.message);
-                        // Optional: Update local UI state to reflect follow status
+                        // Update local UI state to reflect follow status
                     } else {
                         console.error(data.message);
                     }
@@ -244,6 +278,7 @@ import Breadcrumb from "../BreadCrumb.vue"
                 .catch(err => console.error(err));
             },
 
+            // Contact user
             contact() {
                 console.log("Contacting user:", this.username);
                 const url = `http://localhost:5001/api/user/${this.username}`;
