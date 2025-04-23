@@ -25,7 +25,16 @@
       <p>{{uniMessage}}</p>
 
       <label for="password">Password: </label>
-      <input type="text" id="password" placeholder="Password" v-model="password"><br><br>
+      <input
+        :type="showPassword ? 'text' : 'password'"
+        id="password"
+        placeholder="Password"
+        v-model="password"
+      >
+      <button type="button" @click="showPassword = !showPassword">
+        {{ showPassword ? 'Hide' : 'Show' }}
+      </button>
+      <br><br>
 
       <p style="color: red">{{registerMessage}}</p>
 
@@ -48,6 +57,7 @@ export default {
       schoolInput: "", 
       selectedSchool: "",
       password: "",
+      showPassword: false,
       registerMessage: "",
       universities: [],
       debounceTimer: null,

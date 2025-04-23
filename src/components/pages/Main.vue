@@ -203,6 +203,18 @@
       },
   
       searchBooks() {
+        const noParams =
+          !this.searchQuery.trim() &&
+          !this.transactionType &&
+          !this.usernameFilter.trim() &&
+          this.minPrice == null &&
+          this.maxPrice == null &&
+          this.rentDuration == null;
+
+        if (noParams) {
+          return this.fetchBooks();
+        }
+                
         const params = new URLSearchParams();
         if (this.searchQuery.trim()) {
           params.append("book_name", this.searchQuery.trim());

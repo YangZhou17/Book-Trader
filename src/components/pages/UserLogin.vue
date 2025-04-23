@@ -7,7 +7,19 @@
       <input type="text" id="username" placeholder="Username" v-model="username"><br><br>
 
       <label for="password">Password: </label>
-      <input type="text" id="password" placeholder="Password" v-model="password"><br><br>
+      <input
+        :type="showPassword ? 'text' : 'password'"
+        id="password"
+        placeholder="Password"
+        v-model="password"
+      >
+      <button
+        type="button"
+        @click="showPassword = !showPassword"
+      >
+        {{ showPassword ? 'Hide' : 'Show' }}
+      </button>
+      <br><br>
 
       <div id="loginButton" @click="login">Login</div><br><br>
 
@@ -28,6 +40,7 @@ export default {
     return {
       username: "",
       password: "",
+      showPassword: false,
       message: "",
     };
   },
