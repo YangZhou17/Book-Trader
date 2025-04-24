@@ -10,19 +10,16 @@
   Secure account creation and authentication system.
 
 - **Book Listings**  
-  Users can upload books they want to rent or sell, specifying title, genre, price, and rent duration.
+  Users can upload books they want to rent or sell, specifying title, price, and rent duration.
 
 - **Advanced Book Search**  
-  Search books by title, author, price range, seller, or rent duration.
+  Search books by title, price range, seller, or rent duration.
 
 - **Transactions**  
   Rent or buy books with a seamless transaction flow. Track purchases and rentals.
 
-- **Returns**  
-  Renters can return books, automatically re-listing them on the site.
-
 - **User Profiles**  
-  View all personal listings, transaction history, and friends.
+  View all personal listings, transaction history, and friends. Users can also take down a listing book in their own profile. 
 
 - **Social Features**  
   Follow friends and explore book listings from people nearby or within your social circle.
@@ -144,3 +141,11 @@ You can use tools like [`nvm`](https://github.com/nvm-sh/nvm) and [`pyenv`](http
 - Book recommendation engine
 - User reviews and ratings
 - Buy/Rent request system (owner can approve/decline offers)
+- 
+
+---
+
+## ⚠️ Note
+
+- Potential University List Fetching Failure:
+When the users register for the website, they will be prompted to enter their university so that they can see books uploaded by other students from their university. In order to enable this feature, we are calling a third-party API to fetch for all universities in the US. However, the server of the third-party API is not stable, and thus might result in a failure to fetch for the list of universities. This issue is handled by showing a small text to notify the user of the third-party server failure and politely asking the user to try again later. If this issue is experienced during the grading process, please wait for a few minutes and retry entering the university. 
