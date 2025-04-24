@@ -79,11 +79,33 @@ pip install -r requirements.txt
 flask run --port=5001  # backend runs on http://localhost:5001
 ```
 
-### 4. Terminate the app
+> ✅ After both frontend and backend are running, open your browser and go to **[http://localhost:8080](http://localhost:8080)** to access the Book Trader web app.
+
+---
+
+### 🔁 Running the Project Again (After First Setup)
+
+Once you’ve completed the initial setup, you can start the project anytime with just these commands:
+
+**Frontend:**
+```bash
+yarn run serve
+```
+
+**Backend:**
+```bash
+cd backend/
+source venv/bin/activate
+flask run --port=5001
+```
+
+---
+
+### 🛑 Terminate the App
 
 To stop the servers:
 
-- Press `Ctrl+C` in both frontend and backend terminal windows
+- Press `Ctrl+C` in both frontend and backend terminal windows  
 - Run `deactivate` in the backend terminal to exit the virtual environment
 
 ---
