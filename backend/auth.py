@@ -32,7 +32,7 @@ def register():
     data = request.get_json()
     if User.query.filter_by(username=data['username']).first():
         return jsonify({'success': False, 'userExists': True}), 409
-    if User.query.filter_by(email=data['email']).first():
+    if User.query.filter_by(email=data['email'].lower()).first():
         return jsonify({'success': False, 'userExists': True}), 409
     new_user = User(username=data['username'], email=data['email'], school=data['school'])
     new_user.set_password(data['password'])
