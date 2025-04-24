@@ -20,9 +20,14 @@
             <el-table v-if="followers.length != 0" :data="followers" :show-header="false" height="400" style="width: 100%" border>
                 <!-- First column: Name -->
                 <el-table-column prop="name" align="center">
-                <template #default="scope">
-                    {{ scope.row.name }}
-                </template>
+                    <template #default="scope">
+                        <span
+                        style="color: #409EFF; cursor: pointer;"
+                        @click="$router.push(`/profile/${scope.row.name}`)"
+                        >
+                        {{ scope.row.name }}
+                        </span>
+                    </template>
                 </el-table-column>
 
                 <!-- Second column: Follow button -->

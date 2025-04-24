@@ -43,7 +43,8 @@
             <!-- follow and contact button -->
             <el-row :gutter="20" style="width: 80%; margin-top: 20px; margin-left:10%;">
                 <el-col :span="12">
-                    <el-button v-if="!isCurrentUser" type="primary" @click="follow" style="width: 100%;">Follow</el-button>
+                    <el-button v-if="!isCurrentUser && !isFollowing" type="primary" @click="follow" style="width: 100%;">Follow</el-button>
+                    <el-button v-else-if="!isCurrentUser && isFollowing" type="primary" @click="unfollow" style="width: 100%;">Unfollow</el-button>                
                 </el-col>
                 <el-col :span="12">
                     <el-button v-if="!isCurrentUser" type="primary" @click="contact" style="width: 100%;">Contact</el-button>
@@ -114,6 +115,7 @@ import Breadcrumb from "../BreadCrumb.vue"
                     },
                 ],
                 fetchedBooks: [], 
+                isFollowing: false,
             }
         },
 
@@ -242,6 +244,11 @@ import Breadcrumb from "../BreadCrumb.vue"
                 })
                 .catch(err => console.error("Delete error:", err));
             },
+
+            // Check follow or Unfollow
+            toggleFollow() {
+                this.isFollowing ? this.unfollow() : this.follow();
+            },
             
             // Follow user 
             follow() {
@@ -270,10 +277,55 @@ import Breadcrumb from "../BreadCrumb.vue"
                 .then((data) => {
                     if (data.success) {
                         console.log(data.message);
+                        this.isFollowing = true;
+                        this.fetchFollowers();
                         // Update local UI state to reflect follow status
                     } else {
                         console.error(data.message);
                     }
+                })
+                .catch(err => console.error(err));
+            },
+
+            unfollow() {
+                const currentUser = localStorage.getItem("username");
+                const userToUnfollow = this.username;
+                if (currentUser === userToUnfollow) {
+                    console.error("Cannot unfollow yourself.");
+                    return;
+                }
+                console.log("Trying to unfollow:", userToUnfollow);
+                const url = "http://localhost:5001/api/unfollow";
+                const data = {
+                    follower_name: currentUser,
+                    followed_name: userToUnfollow,
+                };
+                fetch(url, {
+                    method: "POST",                // matches your Flask route
+                    body: JSON.stringify(data),
+                    headers: { "content-type": "application/json" },
+                })
+                .then((response) => response.json())
+                .then((data) => {
+                    if (data.success) {
+                        console.log(data.message);
+                        this.isFollowing = false;
+                        this.fetchFollowers();
+                    } else {
+                        console.error(data.message);
+                    }
+                })
+                .catch((err) => console.error(err));
+            },
+
+            fetchFollowStatus() {
+                const currentUser = localStorage.getItem("username");
+                fetch(`http://localhost:5001/api/${this.username}/followers`, {
+                    headers: { 'Content-Type': 'application/json' }
+                })
+                .then(r => r.json())
+                .then(list => {
+                    this.isFollowing = list.some(u => u.name === currentUser);
                 })
                 .catch(err => console.error(err));
             },
@@ -307,6 +359,7 @@ import Breadcrumb from "../BreadCrumb.vue"
             this.fetchFollowing(); 
             this.fetchTransactions();
             this.fetchBooks();
+            this.fetchFollowStatus();
         }
 
     }

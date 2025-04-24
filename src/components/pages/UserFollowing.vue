@@ -18,7 +18,16 @@
             <!-- Display list of users followed by the current user --> 
             <el-empty v-if="followings.length === 0" description="No following" />
             <el-table v-if="followings.length != 0" :data="followings" :show-header="false" height="400" style="width: 100%" border>
-                <el-table-column prop="name"></el-table-column>
+                <el-table-column prop="name">
+                    <template v-slot="scope">
+                        <span
+                        @click="$router.push(`/profile/${scope.row.name}`)"
+                        style="color: #409EFF; cursor: pointer;"
+                        >
+                        {{ scope.row.name }}
+                        </span>
+                    </template>
+                </el-table-column>
             </el-table>
         </el-main>
     </el-container>
