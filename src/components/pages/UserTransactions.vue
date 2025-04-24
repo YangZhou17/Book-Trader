@@ -23,10 +23,14 @@
                 <el-table-column prop="price" label="Price" width="100" align="center"/>
                 <el-table-column prop="seller" label="Seller" width="150" align="center">
                     <template v-slot="scope">
-                        <el-link :underline="false" @click="goToUploaderProfile(scope.row.seller)">{{ scope.row.seller }}</el-link>
+                        <el-link :underline="false" v-if="scope.row.seller!=this.username" @click="goToUploaderProfile(scope.row.seller)">{{ scope.row.seller }}</el-link>
                     </template>
                 </el-table-column>
-                <el-table-column prop="buyer_renter" label="Buyer/Renter" width="150" align="center"/>
+                <el-table-column prop="buyer_renter" label="Buyer/Renter" width="150" align="center">
+                    <template v-slot="scope">
+                        <el-link :underline="false" v-if="scope.row.seller==this.username" @click="goToUploaderProfile(scope.row.seller)">{{ scope.row.buyer_renter }}</el-link>
+                    </template>
+                </el-table-column>
                 <el-table-column prop="transaction_datetime" label="Transaction Date" width="150" align="center">
                     <template v-slot="scope">
                         {{ formatDate(scope.row.transaction_datetime) }}
