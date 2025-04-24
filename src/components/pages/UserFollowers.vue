@@ -10,7 +10,7 @@
         <!-- Main Section -->
         <el-main>
             <el-row>
-                <el-col :span="4">
+                <el-col :span="8" align="left">
                     <h1>Followers of {{username}}</h1>
                 </el-col>
             </el-row>
