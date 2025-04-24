@@ -78,7 +78,7 @@
         <el-table
           v-else
           :data="fetchedBooks"
-          height="400"
+          height="450"
           style="width: 100%"
           border
         >
@@ -86,7 +86,7 @@
           <el-table-column
             prop="transaction_type"
             label="Transaction Type"
-            width="120"
+            width="100"
             align="center"
           />
           <el-table-column
