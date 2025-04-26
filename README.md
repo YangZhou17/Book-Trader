@@ -141,7 +141,6 @@ You can use tools like [`nvm`](https://github.com/nvm-sh/nvm) and [`pyenv`](http
 - Book recommendation engine
 - User reviews and ratings
 - Buy/Rent request system (owner can approve/decline offers)
-- 
 
 ---
 
