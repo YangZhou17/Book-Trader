@@ -335,6 +335,15 @@ import Breadcrumb from "../BreadCrumb.vue"
                 console.log("Contacting user:", this.username);
                 const url = `http://localhost:5001/api/user/${this.username}`;
 
+                const currentUser = localStorage.getItem("username");
+                console.log("Current user:", currentUser);
+
+                if (currentUser === null) {
+                    console.error("User not logged in.");
+                    this.$router.push("/login");
+                    return;
+                }
+
                 fetch(url, {
                     method: 'GET',
                     headers: { 'Content-Type': 'application/json' }
